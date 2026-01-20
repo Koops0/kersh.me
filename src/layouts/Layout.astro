@@ -1,22 +1,170 @@
 <!doctype html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro Basics</title>
-	</head>
-	<body>
-		<slot />
-	</body>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width" />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <meta name="generator" content={Astro.generator} />
+        <title>Kershan Arulneswaran</title>
+        <!-- Google Fonts: Instrument Serif and Stick No Bills -->
+        <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=Stick+No+Bills:wght@400;700&display=swap" rel="stylesheet">
+    </head>
+    <body>
+        <div class="bg-shape bg-lime"></div>
+        <div class="bg-shape bg-tangerine"></div>
+        <div class="bg-shape bg-grape"></div>
+        <slot />
+    </body>
 </html>
 
-<style>
-	html,
-	body {
-		margin: 0;
-		width: 100%;
-		height: 100%;
-	}
+<style is:global>
+html,
+body {
+    margin: 0;
+    width: 100%;
+    min-height: 100vh;
+    font-family: 'Instrument Serif', 'Stick No Bills', serif, sans-serif;
+    background-color: #f5f1e8;
+    position: relative;
+    overflow-x: hidden;
+}
+
+body {
+    position: relative;
+    z-index: 1;
+}
+
+body::before,
+body::after,
+.bg-shape {
+    content: '';
+    position: fixed;
+    z-index: -1;
+    pointer-events: none;
+}
+
+/* Large blob - top right - Bondi Blue */
+body::before {
+    width: 600px;
+    height: 600px;
+    background: #56CCF2;
+    top: -200px;
+    right: -200px;
+    border-radius: 63% 37% 54% 46% / 55% 48% 52% 45%;
+    animation: float 20s ease-in-out infinite, morph 12s ease-in-out infinite;
+}
+
+/* Squircle - bottom left - Strawberry */
+body::after {
+    width: 450px;
+    height: 450px;
+    background: #FF6B9D;
+    bottom: -150px;
+    left: -150px;
+    border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+    animation: float 15s ease-in-out infinite reverse, morph 10s ease-in-out infinite;
+}
+
+/* Triangle-ish blob - bottom right - Lime */
+.bg-lime {
+    width: 350px;
+    height: 350px;
+    background: #98D8C8;
+    bottom: 100px;
+    right: 100px;
+    border-radius: 15% 85% 20% 80% / 85% 15% 85% 15%;
+    animation: pulse 18s ease-in-out infinite, morph 14s ease-in-out infinite;
+}
+
+/* Organic blob - top left - Tangerine */
+.bg-tangerine {
+    width: 280px;
+    height: 280px;
+    background: #FFA07A;
+    top: 150px;
+    left: -100px;
+    border-radius: 73% 27% 46% 54% / 38% 68% 32% 62%;
+    animation: float 22s ease-in-out infinite, morph 16s ease-in-out infinite;
+}
+
+/* Wavy blob - center - Grape */
+.bg-grape {
+    width: 320px;
+    height: 320px;
+    background: #9B72AA;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 45% 55% 60% 40% / 50% 35% 65% 50%;
+    animation: float 19s ease-in-out infinite, morph 13s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translate(0, 0) scale(1) rotate(0deg);
+    }
+    33% {
+        transform: translate(30px, -30px) scale(1.05) rotate(5deg);
+    }
+    66% {
+        transform: translate(-20px, 20px) scale(0.95) rotate(-5deg);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1) rotate(0deg);
+    }
+    50% {
+        transform: scale(1.1) rotate(10deg);
+    }
+}
+
+@keyframes morph {
+    0%, 100% {
+        border-radius: 63% 37% 54% 46% / 55% 48% 52% 45%;
+    }
+    25% {
+        border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+    }
+    50% {
+        border-radius: 54% 46% 38% 62% / 49% 70% 30% 51%;
+    }
+    75% {
+        border-radius: 70% 30% 50% 50% / 30% 65% 35% 70%;
+    }
+}
+
+@media (max-width: 768px) {
+    body::before {
+        width: 400px;
+        height: 400px;
+        top: -150px;
+        right: -150px;
+    }
+    
+    body::after {
+        width: 300px;
+        height: 300px;
+        bottom: -100px;
+        left: -100px;
+    }
+    
+    .bg-lime {
+        width: 250px;
+        height: 250px;
+    }
+    
+    .bg-tangerine {
+        width: 200px;
+        height: 200px;
+        top: 100px;
+        left: -80px;
+    }
+    
+    .bg-grape {
+        width: 220px;
+        height: 220px;
+    }
+}
 </style>
