@@ -10,94 +10,73 @@
         <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=Stick+No+Bills:wght@400;700&display=swap" rel="stylesheet">
     </head>
     <body>
-        <div class="bg-shape bg-lime"></div>
-        <div class="bg-shape bg-tangerine"></div>
-        <div class="bg-shape bg-grape"></div>
         <slot />
     </body>
 </html>
 
 <style is:global>
+html {
+    scroll-behavior: auto;
+}
+
 html,
 body {
     margin: 0;
+    padding: 0;
     width: 100%;
     min-height: 100vh;
     font-family: 'Instrument Serif', 'Stick No Bills', serif, sans-serif;
     background-color: #f5f1e8;
     position: relative;
     overflow-x: hidden;
+    overscroll-behavior: none;
 }
 
 body {
     position: relative;
-    z-index: 1;
 }
 
-body::before,
-body::after,
+.section {
+    position: relative;
+    z-index: 1;
+    overflow: visible;
+}
+
 .bg-shape {
     content: '';
-    position: fixed;
+    position: absolute;
     z-index: -1;
     pointer-events: none;
 }
 
-/* Large blob - top right - Bondi Blue */
-body::before {
-    width: 600px;
-    height: 600px;
-    background: #56CCF2;
-    top: -200px;
-    right: -200px;
-    border-radius: 63% 37% 54% 46% / 55% 48% 52% 45%;
-    animation: float 20s ease-in-out infinite, morph 12s ease-in-out infinite;
+/* Make header transparent with no background */
+header {
+    position: relative;
+    z-index: 100;
+    background: transparent !important;
+    padding-top: 0;
+    margin-top: 0;
 }
 
-/* Squircle - bottom left - Strawberry */
-body::after {
-    width: 450px;
-    height: 450px;
-    background: #FF6B9D;
-    bottom: -150px;
-    left: -150px;
-    border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
-    animation: float 15s ease-in-out infinite reverse, morph 10s ease-in-out infinite;
+footer {
+    position: relative;
+    z-index: 100;
+    background: transparent !important;
 }
 
-/* Triangle-ish blob - bottom right - Lime */
-.bg-lime {
-    width: 350px;
-    height: 350px;
-    background: #98D8C8;
-    bottom: 100px;
-    right: 100px;
-    border-radius: 15% 85% 20% 80% / 85% 15% 85% 15%;
-    animation: pulse 18s ease-in-out infinite, morph 14s ease-in-out infinite;
+/* Ensure content stays above blobs */
+main,
+section > *:not(.bg-shape) {
+    position: relative;
+    z-index: 1;
 }
 
-/* Organic blob - top left - Tangerine */
-.bg-tangerine {
-    width: 280px;
-    height: 280px;
-    background: #FFA07A;
-    top: 150px;
-    left: -100px;
-    border-radius: 73% 27% 46% 54% / 38% 68% 32% 62%;
-    animation: float 22s ease-in-out infinite, morph 16s ease-in-out infinite;
-}
-
-/* Wavy blob - center - Grape */
-.bg-grape {
-    width: 320px;
-    height: 320px;
-    background: #9B72AA;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    border-radius: 45% 55% 60% 40% / 50% 35% 65% 50%;
-    animation: float 19s ease-in-out infinite, morph 13s ease-in-out infinite;
-}
+/* iMac G3 Colors */
+.bondi-blue { background: #0095B6; }
+.strawberry { background: #D84C6F; }
+.lime { background: #7FBF4D; }
+.tangerine { background: #F08A24; }
+.grape { background: #6B4E8A; }
 
 @keyframes float {
     0%, 100% {
@@ -135,36 +114,9 @@ body::after {
     }
 }
 
-@media (max-width: 768px) {
-    body::before {
-        width: 400px;
-        height: 400px;
-        top: -150px;
-        right: -150px;
-    }
-    
-    body::after {
-        width: 300px;
-        height: 300px;
-        bottom: -100px;
-        left: -100px;
-    }
-    
-    .bg-lime {
-        width: 250px;
-        height: 250px;
-    }
-    
-    .bg-tangerine {
-        width: 200px;
-        height: 200px;
-        top: 100px;
-        left: -80px;
-    }
-    
-    .bg-grape {
-        width: 220px;
-        height: 220px;
-    }
+/* GPU acceleration for animations */
+.bg-shape {
+    transform: translateZ(0);
+    backface-visibility: hidden;
 }
 </style>

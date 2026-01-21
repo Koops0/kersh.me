@@ -16,6 +16,7 @@
         text-align: center;
         font-family: 'Instrument Serif', serif;
         font-weight: 600;
+        background: transparent;
     }
     small{
         margin-bottom: 2px;

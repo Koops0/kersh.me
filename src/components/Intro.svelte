@@ -63,13 +63,12 @@
     <div class="info-section">
         <div class="profession-row">
             <p class="profession" bind:this={professionEl}></p>
-            <span class="separator">|</span>
             <nav class="sections">
+                <a href="#about">About</a>
+                <span class="separator">|</span>
                 <a href="/blog">Blog</a>
                 <span class="separator">|</span>
                 <a href="/projects">Projects</a>
-                <span class="separator">|</span>
-                <a href="/about">About</a>
             </nav>
         </div>
     </div>
