@@ -1,39 +1,303 @@
+---
+import { ClientRouter } from 'astro:transitions';
+---
+
 <!doctype html>
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <meta name="generator" content={Astro.generator} />
         <title>Kershan Arulneswaran</title>
-        <!-- Google Fonts: Instrument Serif and Stick No Bills -->
-        <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=Stick+No+Bills:wght@400;700&display=swap" rel="stylesheet">
+        <ClientRouter />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Red+Hat+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
     </head>
     <body>
+        <div id="site-loader" class="site-loader" role="status" aria-label="Loading site">
+            <div class="loader-mark" aria-hidden="true">k.a.</div>
+            <div class="loader-track" aria-hidden="true"><span></span></div>
+        </div>
+        <noscript><style>.site-loader { display: none !important; }</style></noscript>
         <slot />
+
+        <script>
+            const minimumLoaderTime = 360;
+            let loaderShownAt = performance.now();
+            let loaderCycle = 0;
+
+            function showLoader() {
+                loaderCycle += 1;
+                loaderShownAt = performance.now();
+                const loader = document.getElementById('site-loader');
+                if (!loader) return;
+
+                loader.hidden = false;
+                loader.removeAttribute('aria-hidden');
+                requestAnimationFrame(() => loader.classList.remove('is-hidden'));
+            }
+
+            async function hideLoader() {
+                const cycle = loaderCycle;
+                await document.fonts?.ready;
+
+                const elapsed = performance.now() - loaderShownAt;
+                const remaining = Math.max(0, minimumLoaderTime - elapsed);
+
+                window.setTimeout(() => {
+                    if (cycle !== loaderCycle) return;
+                    const loader = document.getElementById('site-loader');
+                    if (!loader) return;
+
+                    loader.classList.add('is-hidden');
+                    loader.setAttribute('aria-hidden', 'true');
+
+                    window.setTimeout(() => {
+                        if (cycle === loaderCycle) loader.hidden = true;
+                    }, 200);
+                }, remaining);
+            }
+
+            document.addEventListener('astro:before-preparation', showLoader);
+            document.addEventListener('astro:page-load', hideLoader);
+
+            if (document.readyState === 'complete') {
+                void hideLoader();
+            } else {
+                window.addEventListener('load', () => void hideLoader(), { once: true });
+            }
+
+            if (import.meta.env.PROD && 'serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                    void navigator.serviceWorker.register('/sw.js');
+                }, { once: true });
+            }
+
+            const squircleMedia = window.matchMedia(
+                '(hover: hover) and (pointer: fine) and (min-width: 821px) and (prefers-reduced-motion: no-preference)'
+            );
+            let pointerClientX = -1;
+            let pointerClientY = -1;
+            let squircleFrame = 0;
+            let trackedSquircle: HTMLElement | undefined;
+
+            function clearSquircle(shape: HTMLElement) {
+                shape.classList.remove('is-pointer-active');
+                shape.style.removeProperty('--deform-radius');
+            }
+
+            function reactToSquircle() {
+                squircleFrame = 0;
+                const shapes = Array.from(document.querySelectorAll<HTMLElement>('.bg-shape'));
+
+                if (!squircleMedia.matches || pointerClientX < 0 || pointerClientY < 0) {
+                    shapes.forEach(clearSquircle);
+                    return;
+                }
+
+                let hoveredShape: HTMLElement | undefined;
+                let closestDistance = Number.POSITIVE_INFINITY;
+
+                shapes.forEach((shape) => {
+                    const bounds = shape.getBoundingClientRect();
+                    const normalizedX = (pointerClientX - (bounds.left + bounds.width / 2)) / (bounds.width / 2);
+                    const normalizedY = (pointerClientY - (bounds.top + bounds.height / 2)) / (bounds.height / 2);
+                    const squircleDistance = normalizedX ** 4 + normalizedY ** 4;
+
+                    if (squircleDistance <= 1 && squircleDistance < closestDistance) {
+                        closestDistance = squircleDistance;
+                        hoveredShape = shape;
+                    }
+                });
+
+                if (hoveredShape) trackedSquircle = hoveredShape;
+                if (!trackedSquircle?.isConnected) return;
+
+                const trackedBounds = trackedSquircle.getBoundingClientRect();
+                const relativeX = (pointerClientX - (trackedBounds.left + trackedBounds.width / 2)) / (trackedBounds.width / 2);
+                const relativeY = (pointerClientY - (trackedBounds.top + trackedBounds.height / 2)) / (trackedBounds.height / 2);
+                const activeX = Math.tanh(relativeX * 0.9);
+                const activeY = Math.tanh(relativeY * 0.9);
+
+                const clampRadius = (value: number) => Math.min(78, Math.max(22, value));
+                const topLeft = clampRadius(50 + (activeX + activeY) * 16);
+                const topRight = clampRadius(50 + (-activeX + activeY) * 16);
+                const bottomRight = clampRadius(50 + (-activeX - activeY) * 16);
+                const bottomLeft = clampRadius(50 + (activeX - activeY) * 16);
+                const verticalTopLeft = clampRadius(50 + (activeX * 0.7 + activeY) * 18);
+                const verticalTopRight = clampRadius(50 + (-activeX * 0.7 + activeY) * 18);
+                const verticalBottomRight = clampRadius(50 + (-activeX * 0.7 - activeY) * 18);
+                const verticalBottomLeft = clampRadius(50 + (activeX * 0.7 - activeY) * 18);
+
+                trackedSquircle.classList.add('is-pointer-active');
+                trackedSquircle.style.setProperty(
+                    '--deform-radius',
+                    `${topLeft}% ${topRight}% ${bottomRight}% ${bottomLeft}% / ${verticalTopLeft}% ${verticalTopRight}% ${verticalBottomRight}% ${verticalBottomLeft}%`
+                );
+            }
+
+            function moveSquircles(event: PointerEvent) {
+                if (!squircleMedia.matches) return;
+                pointerClientX = event.clientX;
+                pointerClientY = event.clientY;
+                if (!squircleFrame) squircleFrame = requestAnimationFrame(reactToSquircle);
+            }
+
+            function resetSquircles() {
+                pointerClientX = -1;
+                pointerClientY = -1;
+                trackedSquircle = undefined;
+                document.querySelectorAll<HTMLElement>('.bg-shape').forEach(clearSquircle);
+            }
+
+            window.addEventListener('pointermove', moveSquircles, { passive: true });
+            squircleMedia.addEventListener('change', resetSquircles);
+            document.addEventListener('astro:page-load', resetSquircles);
+        </script>
     </body>
 </html>
 
 <style is:global>
+:root {
+    --font-display: 'Archivo', 'Arial Black', sans-serif;
+    --font-body: 'Red Hat Mono', ui-monospace, 'SFMono-Regular', Consolas, monospace;
+    --ink: #f3f7f6;
+    --muted-ink: rgb(243 247 246 / 68%);
+    --accent: #72d6e5;
+    --cinema-black: #050709;
+}
+
 html {
     scroll-behavior: auto;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
 }
 
 html,
 body {
     margin: 0;
     padding: 0;
-    width: 100%;
-    min-height: 100vh;
-    font-family: 'Instrument Serif', 'Stick No Bills', serif, sans-serif;
-    background-color: #f5f1e8;
-    position: relative;
-    overflow-x: hidden;
-    overscroll-behavior: none;
+    min-width: 0;
 }
 
 body {
+    min-height: 100vh;
+    min-height: 100dvh;
+    font-family: var(--font-body);
+    line-height: 1.5;
+    color: var(--ink);
+    background-color: var(--cinema-black);
+    background-image: radial-gradient(ellipse at 50% 35%, #121a20 0%, #080c0f 52%, #030405 100%);
+    background-attachment: fixed;
     position: relative;
+    overflow-x: hidden;
+    overscroll-behavior-x: none;
+}
+
+h1,
+h2,
+h3 {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-stretch: 125%;
+    font-variation-settings: 'wdth' 125, 'wght' 800;
+}
+
+button,
+input,
+textarea,
+select {
+    font: inherit;
+}
+
+.site-loader {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    gap: 1.25rem;
+    color: var(--ink);
+    background: var(--cinema-black);
+    opacity: 1;
+    transition: opacity 0.18s ease;
+}
+
+.site-loader.is-hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.loader-mark {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-stretch: 125%;
+    font-variation-settings: 'wdth' 125, 'wght' 800;
+    font-size: clamp(1.4rem, 4vw, 2rem);
+    letter-spacing: 0.12em;
+    color: var(--ink);
+}
+
+@supports (-webkit-text-stroke: 1px black) {
+    .loader-mark {
+        color: transparent;
+        -webkit-text-stroke: 1.25px var(--ink);
+        paint-order: stroke fill;
+    }
+}
+
+.loader-track {
+    width: 7rem;
+    height: 1px;
+    overflow: hidden;
+    background: rgb(243 247 246 / 18%);
+}
+
+.loader-track span {
+    width: 100%;
+    height: 100%;
+    display: block;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    animation: loader-progress 0.9s ease-in-out infinite;
+}
+
+@keyframes loader-progress {
+    0% { transform: scaleX(0); }
+    55% { transform: scaleX(1); transform-origin: left; }
+    56% { transform: scaleX(1); transform-origin: right; }
+    100% { transform: scaleX(0); transform-origin: right; }
+}
+
+@supports (overflow: clip) {
+    body {
+        overflow-x: clip;
+    }
+}
+
+img,
+svg {
+    max-width: 100%;
+}
+
+a,
+button {
+    -webkit-tap-highlight-color: transparent;
+}
+
+:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 4px;
 }
 
 .section {
@@ -47,6 +311,16 @@ body {
     position: absolute;
     z-index: -1;
     pointer-events: none;
+    opacity: 0.66;
+    box-shadow:
+        inset 0 1px 0 rgb(255 255 255 / 42%),
+        inset -1.5rem -2rem 3rem rgb(0 0 0 / 28%),
+        0 1.5rem 5rem rgb(0 0 0 / 28%);
+    transition: border-radius 140ms ease-out;
+}
+
+.bg-shape.is-pointer-active {
+    border-radius: var(--deform-radius) !important;
 }
 
 /* Make header transparent with no background */
@@ -54,8 +328,6 @@ header {
     position: relative;
     z-index: 100;
     background: transparent !important;
-    padding-top: 0;
-    margin-top: 0;
 }
 
 footer {
@@ -71,12 +343,12 @@ section > *:not(.bg-shape) {
     z-index: 1;
 }
 
-/* iMac G3 Colors */
-.bondi-blue { background: #0095B6; }
-.strawberry { background: #D84C6F; }
-.lime { background: #7FBF4D; }
-.tangerine { background: #F08A24; }
-.grape { background: #6B4E8A; }
+/* Translucent iMac G3 colors against a theater-dark canvas. */
+.bondi-blue { background: radial-gradient(circle at 30% 24%, #b7f6ff 0%, #16b7d1 25%, #006b84 66%, #003947 100%); }
+.strawberry { background: radial-gradient(circle at 30% 24%, #ffd0dd 0%, #e8587b 25%, #9f2949 66%, #501326 100%); }
+.lime { background: radial-gradient(circle at 30% 24%, #e5ffc3 0%, #91cf55 25%, #4f8c24 66%, #254510 100%); }
+.tangerine { background: radial-gradient(circle at 30% 24%, #ffe0ae 0%, #f39735 25%, #b65a12 66%, #602b08 100%); }
+.grape { background: radial-gradient(circle at 30% 24%, #e1d0ff 0%, #8967af 25%, #553577 66%, #2c193f 100%); }
 
 @keyframes float {
     0%, 100% {
@@ -118,5 +390,31 @@ section > *:not(.bg-shape) {
 .bg-shape {
     transform: translateZ(0);
     backface-visibility: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+@media (max-width: 820px) {
+    body {
+        background-attachment: scroll;
+    }
+
+    .bg-shape {
+        animation: none !important;
+        transform: none;
+        opacity: 0.52;
+    }
 }
 </style>

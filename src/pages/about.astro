@@ -2,34 +2,19 @@
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.svelte';
 import Footer from '../components/Footer.svelte';
+import About from '../components/About.svelte';
 ---
 
 <Layout>
-    <Header client:load />
-    
-    <!-- About Section with Grape blob -->
-    <section class="section about-section">
-        <div class="bg-shape grape about-blob"></div>
-        
-        <div class="content">
-            <h1>About Me</h1>
-            <p>I'm Kershan Arulneswaran, a software engineer passionate about building beautiful and functional web experiences.</p>
-            
-            <h2>What I Do</h2>
-            <p>I specialize in full-stack development, with a focus on modern web technologies and user experience design.</p>
-            
-            <h2>Skills</h2>
-            <ul>
-                <li>JavaScript/TypeScript</li>
-                <li>React, Svelte, Astro</li>
-                <li>Node.js</li>
-                <li>UI/UX Design</li>
-            </ul>
-            
-            <h2>Get In Touch</h2>
-            <p>Feel free to reach out if you'd like to collaborate or just chat about tech!</p>
-        </div>
-    </section>
+    <Header client:load currentPage="about" />
+
+    <main>
+        <!-- About Section with Grape blob -->
+        <section class="section about-section">
+            <div class="bg-shape grape about-blob"></div>
+            <About client:load />
+        </section>
+    </main>
     
     <Footer client:load />
 </Layout>
@@ -38,72 +23,22 @@ import Footer from '../components/Footer.svelte';
 .about-section {
     position: relative;
     overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.content {
-    max-width: 800px;
-    padding: 2rem;
-}
-
-h1 {
-    font-size: clamp(3rem, 8vw, 6rem);
-    font-weight: 900;
-    font-style: italic;
-    margin: 0 0 2rem 0;
-    line-height: 1;
-}
-
-h2 {
-    font-size: clamp(1.5rem, 4vw, 2.5rem);
-    font-weight: 700;
-    margin: 2rem 0 1rem 0;
-}
-
-p {
-    font-size: clamp(1rem, 2vw, 1.25rem);
-    line-height: 1.6;
-    margin-bottom: 1rem;
-}
-
-ul {
-    font-size: clamp(1rem, 2vw, 1.25rem);
-    line-height: 1.8;
-    list-style-position: inside;
-}
-
-li {
-    margin-bottom: 0.5rem;
 }
 
 /* Grape blob - large, centered */
 .about-blob {
-    width: 800px;
-    height: 800px;
+    width: min(75vw, 50rem);
+    aspect-ratio: 1;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
+    translate: -50% -50%;
     border-radius: 45% 55% 60% 40% / 50% 35% 65% 50%;
     animation: float 25s ease-in-out infinite, morph 18s ease-in-out infinite;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 520px) {
     .about-blob {
-        width: 500px;
-        height: 500px;
-    }
-    
-    .content {
-        padding: 1rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .about-blob {
-        width: 350px;
-        height: 350px;
+        width: min(78vw, 28rem);
     }
 }
 </style>

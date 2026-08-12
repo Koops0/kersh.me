@@ -1,30 +1,23 @@
 ---
-import { ClientRouter } from 'astro:transitions';
 import Layout from '../layouts/Layout.astro';
 import Footer from '../components/Footer.svelte';
 import Header from '../components/Header.svelte';
 import Intro from '../components/Intro.svelte';
-import About from '../components/About.svelte';
 ---
 <Layout>
-    <ClientRouter />
-    <Header client:load />
-    
-    <!-- Intro Section with all 5 blobs -->
-    <section class="section intro-section" id="intro">
-        <div class="bg-shape bondi-blue blob-1"></div>
-        <div class="bg-shape strawberry blob-2"></div>
-        <div class="bg-shape lime blob-3"></div>
-        <div class="bg-shape tangerine blob-4"></div>
-        <div class="bg-shape grape blob-5"></div>
-        <Intro client:load />
-    </section>
+    <Header client:load isHomePage={true} currentPage="home" />
 
-    <!-- About Section with Grape blob -->
-    <section class="section about-section last-section" id="about">
-        <div class="bg-shape grape about-blob"></div>
-        <About client:load />
-    </section>
+    <main>
+        <!-- Intro Section with all 5 blobs -->
+        <section class="section intro-section" id="intro">
+            <div class="bg-shape bondi-blue blob-1"></div>
+            <div class="bg-shape strawberry blob-2"></div>
+            <div class="bg-shape lime blob-3"></div>
+            <div class="bg-shape tangerine blob-4"></div>
+            <div class="bg-shape grape blob-5"></div>
+            <Intro client:load />
+        </section>
+    </main>
     
     <Footer client:load />
 </Layout>
@@ -39,95 +32,99 @@ section {
 .intro-section {
     position: relative;
     overflow: visible;
-    min-height: 100vh;
-    margin-top: -200px;
-    padding-top: 200px;
-}
-
-.about-section {
-    position: relative;
-    overflow: visible;
-    min-height: 100vh;
-}
-
-/* Last section has no overflow to prevent blobs from going under footer */
-.last-section {
-    overflow: hidden;
+    min-height: calc(100vh - 7rem);
+    min-height: calc(100svh - 7rem);
 }
 
 /* Intro blobs */
 .blob-1 {
-    width: 600px;
-    height: 600px;
-    top: -200px;
-    right: -200px;
+    width: clamp(20rem, 48vw, 37.5rem);
+    aspect-ratio: 1;
+    top: clamp(2rem, 4vw, 4rem);
+    right: clamp(2rem, 5vw, 5rem);
     border-radius: 63% 37% 54% 46% / 55% 48% 52% 45%;
     animation: float 20s ease-in-out infinite, morph 12s ease-in-out infinite;
 }
 
 .blob-2 {
-    width: 450px;
-    height: 450px;
-    bottom: -150px;
-    left: -150px;
+    width: clamp(16rem, 36vw, 28rem);
+    aspect-ratio: 1;
+    bottom: clamp(2rem, 5vw, 5rem);
+    left: clamp(2rem, 5vw, 5rem);
     border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
     animation: float 15s ease-in-out infinite reverse, morph 10s ease-in-out infinite;
 }
 
 .blob-3 {
-    width: 350px;
-    height: 350px;
-    bottom: 100px;
-    right: 100px;
+    width: clamp(13rem, 28vw, 22rem);
+    aspect-ratio: 1;
+    bottom: clamp(2rem, 8vw, 7rem);
+    right: clamp(-5rem, 5vw, 6rem);
     border-radius: 15% 85% 20% 80% / 85% 15% 85% 15%;
     animation: pulse 18s ease-in-out infinite, morph 14s ease-in-out infinite;
 }
 
 .blob-4 {
-    width: 280px;
-    height: 280px;
-    top: 150px;
-    left: -100px;
+    width: clamp(11rem, 22vw, 18rem);
+    aspect-ratio: 1;
+    top: clamp(5rem, 12vw, 10rem);
+    left: clamp(2rem, 5vw, 5rem);
     border-radius: 73% 27% 46% 54% / 38% 68% 32% 62%;
     animation: float 22s ease-in-out infinite, morph 16s ease-in-out infinite;
 }
 
 .blob-5 {
-    width: 320px;
-    height: 320px;
+    width: clamp(12rem, 25vw, 20rem);
+    aspect-ratio: 1;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
+    translate: -50% -50%;
     border-radius: 45% 55% 60% 40% / 50% 35% 65% 50%;
     animation: float 19s ease-in-out infinite, morph 13s ease-in-out infinite;
 }
 
-/* About blob */
-.about-blob {
-    width: 800px;
-    height: 800px;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    border-radius: 45% 55% 60% 40% / 50% 35% 65% 50%;
-    animation: float 25s ease-in-out infinite, morph 18s ease-in-out infinite;
-}
-
-@media (max-width: 768px) {
+@media (max-width: 820px) {
     .intro-section {
-        margin-top: -150px;
-        padding-top: 150px;
+        min-height: calc(100vh - 6rem);
+        min-height: calc(100svh - 6rem);
     }
-    
-    .blob-1 { width: 400px; height: 400px; top: -150px; right: -150px; }
-    .blob-2 { width: 300px; height: 300px; bottom: -100px; left: -100px; }
-    .blob-3 { width: 250px; height: 250px; }
-    .blob-4 { width: 200px; height: 200px; top: 100px; left: -80px; }
-    .blob-5 { width: 220px; height: 220px; }
-    .about-blob { width: 500px; height: 500px; }
+
+    .blob-1 {
+        width: min(70vw, 20rem);
+        top: 1.5rem;
+        right: 4vw;
+    }
+
+    .blob-2 {
+        width: min(62vw, 16rem);
+        bottom: 2rem;
+        left: 4vw;
+    }
+
+    .blob-3 {
+        width: min(54vw, 13rem);
+        right: 5vw;
+    }
+
+    .blob-4 {
+        width: min(48vw, 11rem);
+        left: 4vw;
+    }
+
+    .blob-5 {
+        width: min(56vw, 12rem);
+    }
 }
 
-@media (max-width: 480px) {
-    .about-blob { width: 350px; height: 350px; }
+@media (max-width: 520px) {
+    .blob-3 {
+        right: 5vw;
+    }
+}
+
+@media (max-height: 560px) and (orientation: landscape) {
+    .intro-section {
+        min-height: auto;
+    }
 }
 </style>

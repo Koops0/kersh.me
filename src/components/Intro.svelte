@@ -1,8 +1,7 @@
 <script lang="ts">
     import { onMount } from 'svelte';
 
-    let firstNameEl: HTMLElement | null = null;
-    let lastNameEl: HTMLElement | null = null;
+    let fullNameEl: HTMLElement | null = null;
     let professionEl: HTMLElement | null = null;
 
     const chars = 'abcdefghijklmnopqrstuvwxyz';
@@ -13,13 +12,20 @@
         const maxLength = Math.max(originalText.length, targetText.length);
         
         function update() {
+            if (window.matchMedia('(max-width: 820px)').matches) {
+                element.textContent = targetText;
+                return;
+            }
+
             const elapsed = Date.now() - startTime;
             const progress = Math.min(elapsed / duration, 1);
             
             let result = '';
             for (let i = 0; i < maxLength; i++) {
                 if (i < targetText.length) {
-                    if (progress * maxLength > i) {
+                    if (/\s/.test(targetText[i])) {
+                        result += targetText[i];
+                    } else if (progress * maxLength > i) {
                         result += targetText[i];
                     } else {
                         result += chars[Math.floor(Math.random() * chars.length)];
@@ -40,31 +46,37 @@
     }
 
     onMount(() => {
-        setTimeout(() => {
-            if (firstNameEl) scrambleText(firstNameEl, 'KERSHAN', 1500);
-        }, 300);
-        
-        setTimeout(() => {
-            if (lastNameEl) scrambleText(lastNameEl, 'ARULNESWARAN', 1800);
-        }, 1500);
-        
-        setTimeout(() => {
-            if (professionEl) scrambleText(professionEl, 'Software Engineer', 1200);
-        }, 100);
+        if (
+            window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
+            window.matchMedia('(max-width: 820px)').matches
+        ) {
+            return;
+        }
+
+        const timers = [
+            setTimeout(() => {
+                if (fullNameEl) scrambleText(fullNameEl, 'KERSHAN\nARULNESWARAN', 2200);
+            }, 300),
+
+            setTimeout(() => {
+                if (professionEl) scrambleText(professionEl, 'Software Engineer', 1200);
+            }, 100)
+        ];
+
+        return () => timers.forEach(clearTimeout);
     });
 </script>
 
 <div class="intro">
     <div class="name-container">
-        <h1 bind:this={firstNameEl} class="first-name"></h1>
-        <h1 bind:this={lastNameEl} class="last-name"></h1>
+        <h1 bind:this={fullNameEl} class="full-name">{'KERSHAN\nARULNESWARAN'}</h1>
     </div>
     
     <div class="info-section">
         <div class="profession-row">
-            <p class="profession" bind:this={professionEl}></p>
+            <p class="profession" bind:this={professionEl}>Software Engineer</p>
             <nav class="sections">
-                <a href="#about">About</a>
+                <a href="/about">About</a>
                 <span class="separator">|</span>
                 <a href="/blog">Blog</a>
                 <span class="separator">|</span>
@@ -75,42 +87,47 @@
 </div>
 
 <style>
-    .intro {
-        padding: clamp(2rem, 5vw, 4rem) clamp(1rem, 4vw, 2rem);
-        min-height: 60vh;
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        justify-content: center;
-        gap: clamp(1.5rem, 4vw, 3rem);
-        max-width: 1200px;
-        margin: 0 auto;
-        width: 100%;
-        box-sizing: border-box;
-    }
+.intro {
+    width: min(100%, 82rem);
+    min-width: 0;
+    min-height: calc(100vh - 7rem);
+    min-height: calc(100svh - 7rem);
+    padding: clamp(3rem, 8vh, 7rem) max(clamp(1rem, 5vw, 4.5rem), env(safe-area-inset-left));
+    padding-right: max(clamp(1rem, 5vw, 4.5rem), env(safe-area-inset-right));
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: clamp(1.25rem, 3vw, 2.5rem);
+    margin: 0 auto;
+}
     
-    .name-container {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.5rem;
-        width: 100%;
-        min-height: clamp(6rem, 20vw, 20rem);
-    }
+.name-container {
+    width: 100%;
+    min-width: 0;
+}
     
-    h1 {
-        font-size: clamp(3rem, 10vw, 10rem);
-        font-weight: 900;
-        font-style: italic;
-        margin: 0;
-        color: inherit;
-        text-align: left;
-        line-height: 0.95;
-        width: 100%;
-        overflow-wrap: break-word;
-        word-break: break-word;
-        min-height: clamp(3rem, 10vw, 10rem);
+.full-name {
+    max-width: 100%;
+    font-size: 6.5rem;
+    font-weight: 800;
+    font-stretch: 115%;
+    font-variation-settings: 'wdth' 115, 'wght' 800;
+    letter-spacing: -0.01em;
+    margin: 0;
+    color: var(--ink);
+    text-align: left;
+    line-height: 0.88;
+    white-space: pre-line;
+}
+
+@supports (-webkit-text-stroke: 1px black) {
+    .full-name {
+        color: transparent;
+        -webkit-text-stroke: clamp(1.25px, 0.12em, 3px) var(--ink);
+        paint-order: stroke fill;
     }
+}
     
     .info-section {
         display: flex;
@@ -124,21 +141,22 @@
         align-items: center;
         gap: clamp(0.75rem, 2vw, 1.5rem);
         flex-wrap: wrap;
+        min-width: 0;
     }
     
     .profession {
         font-size: clamp(1.25rem, 3vw, 3rem);
         font-weight: 600;
         margin: 0;
-        color: rgba(0, 0, 0, 0.7);
+        color: var(--muted-ink);
         text-align: left;
-        min-width: 15ch;
+        min-width: 14ch;
     }
     
     .sections {
-        display: flex;
         gap: clamp(0.75rem, 2vw, 1.5rem);
         align-items: center;
+        flex-wrap: wrap;
     }
     
     .sections a {
@@ -146,11 +164,11 @@
         font-weight: 600;
         text-decoration: none;
         color: inherit;
-        transition: all 0.3s ease;
+        transition: color 0.2s ease, transform 0.2s ease;
     }
     
     .sections a:hover {
-        color: rgba(0, 0, 0, 0.6);
+        color: var(--accent);
         transform: translateY(-2px);
     }
     
@@ -160,64 +178,87 @@
         user-select: none;
     }
 
-    /* Tablet breakpoint */
-    @media (max-width: 768px) {
-        .intro {
-            min-height: 50vh;
-        }
-        
-        .name-container {
-            min-height: clamp(5rem, 18vw, 12rem);
-        }
-        
-        h1 {
-            font-size: clamp(2.5rem, 9vw, 6rem);
-            min-height: clamp(2.5rem, 9vw, 6rem);
-        }
-        
-        .profession {
-            font-size: clamp(1rem, 2.5vw, 2rem);
+    @media (max-width: 1100px) {
+        .full-name {
+            font-size: 5.5rem;
         }
     }
 
-    /* Mobile breakpoint */
-    @media (max-width: 480px) {
+    @media (max-width: 900px) {
+        .full-name {
+            font-size: 5rem;
+        }
+    }
+
+    @media (max-width: 820px) {
         .intro {
-            padding: 2rem 1rem;
-            min-height: auto;
-            gap: 1.5rem;
+            min-height: calc(100vh - 6rem);
+            min-height: calc(100svh - 6rem);
+            padding-block: clamp(2.5rem, 7vh, 5rem);
         }
-        
-        .name-container {
-            gap: 0.25rem;
-            min-height: clamp(4rem, 16vw, 8rem);
+
+        .full-name {
+            font-size: 3rem;
+            line-height: 0.92;
         }
-        
-        h1 {
-            font-size: clamp(2rem, 8vw, 4rem);
-            line-height: 1;
-            min-height: clamp(2rem, 8vw, 4rem);
-        }
-        
-        .profession {
-            font-size: clamp(0.875rem, 2vw, 1.25rem);
-            min-width: auto;
-        }
-        
-        .profession-row {
-            gap: 0.5rem;
-        }
-        
+
         .sections {
-            gap: 0.5rem;
+            display: none;
         }
-        
+    }
+
+    @media (max-width: 560px) {
+        .intro {
+            gap: 2.25rem;
+        }
+
+        .profession-row {
+            align-items: flex-start;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .profession {
+            min-width: 0;
+        }
+
+        .sections {
+            gap: 0.65rem;
+        }
+
         .sections a {
-            font-size: 0.875rem;
+            font-size: 1rem;
         }
-        
-        .separator {
-            font-size: 0.875rem;
+    }
+
+    @media (max-width: 480px) {
+        .full-name {
+            font-size: 2.5rem;
+        }
+    }
+
+    @media (max-width: 380px) {
+        .full-name {
+            font-size: 2.15rem;
+        }
+    }
+
+    @media (max-width: 340px) {
+        .full-name {
+            font-size: 1.9rem;
+        }
+    }
+
+    @media (max-width: 300px) {
+        .full-name {
+            font-size: 1.7rem;
+        }
+    }
+
+    @media (max-height: 560px) and (orientation: landscape) {
+        .intro {
+            min-height: auto;
+            padding-block: 2rem 3rem;
         }
     }
 </style>

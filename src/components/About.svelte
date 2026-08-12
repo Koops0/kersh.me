@@ -29,47 +29,54 @@
     align-items: center;
     justify-content: center;
     min-height: 100vh;
-    padding: 2rem;
+    min-height: 100svh;
+    padding: clamp(4rem, 9vw, 8rem) max(clamp(1rem, 5vw, 4.5rem), env(safe-area-inset-left));
+    padding-right: max(clamp(1rem, 5vw, 4.5rem), env(safe-area-inset-right));
 }
 
 .content {
-    max-width: 800px;
+    max-width: 50rem;
     width: 100%;
+    min-width: 0;
 }
 
 h1 {
-    font-size: clamp(3rem, 8vw, 6rem);
-    font-weight: 900;
-    font-style: italic;
+    font-size: clamp(2.75rem, 8vw, 6rem);
+    font-weight: 800;
     margin: 0 0 2rem 0;
     line-height: 1;
 }
 
 h2 {
     font-size: clamp(1.5rem, 4vw, 2.5rem);
-    font-weight: 700;
+    font-weight: 800;
     margin: 2rem 0 1rem 0;
 }
 
 p {
-    font-size: clamp(1rem, 2vw, 1.25rem);
+    font-size: clamp(1.05rem, 2vw, 1.25rem);
     line-height: 1.6;
-    margin-bottom: 1rem;
+    margin: 0 0 1rem;
+    overflow-wrap: anywhere;
 }
 
 ul {
-    font-size: clamp(1rem, 2vw, 1.25rem);
+    padding-left: 1.25rem;
+    font-size: clamp(1.05rem, 2vw, 1.25rem);
     line-height: 1.8;
-    list-style-position: inside;
 }
 
 li {
     margin-bottom: 0.5rem;
 }
 
-@media (max-width: 768px) {
-    .about-container {
-        padding: 1rem;
+@media (max-width: 520px) {
+    h1 {
+        margin-bottom: 1.5rem;
+    }
+
+    h2 {
+        margin-top: 1.75rem;
     }
 }
 </style>
