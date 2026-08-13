@@ -10,11 +10,11 @@ import Intro from '../components/Intro.svelte';
     <main>
         <!-- Intro Section with all 5 blobs -->
         <section class="section intro-section" id="intro">
-            <div class="bg-shape bondi-blue blob-1"></div>
-            <div class="bg-shape strawberry blob-2"></div>
-            <div class="bg-shape lime blob-3"></div>
-            <div class="bg-shape tangerine blob-4"></div>
-            <div class="bg-shape grape blob-5"></div>
+            <div class="bg-shape bondi-blue blob-1" data-squircle="bondi" transition:name="cinema-bondi"></div>
+            <div class="bg-shape strawberry blob-2" data-squircle="strawberry" transition:name="cinema-strawberry"></div>
+            <div class="bg-shape lime blob-3" transition:name="cinema-lime"></div>
+            <div class="bg-shape tangerine blob-4" transition:name="cinema-tangerine"></div>
+            <div class="bg-shape grape blob-5" data-squircle="grape" transition:name="cinema-grape"></div>
             <Intro client:load />
         </section>
     </main>

@@ -1,5 +1,6 @@
 <script lang="ts">
     import { onMount } from 'svelte';
+    import { navigate } from 'astro:transitions/client';
     import FaGithub from 'svelte-icons/fa/FaGithub.svelte'
     import FaLinkedin from 'svelte-icons/fa/FaLinkedin.svelte'
     import FaFileAlt from 'svelte-icons/fa/FaFileAlt.svelte'
@@ -9,9 +10,12 @@
     export let currentPage: 'home' | 'about' | 'blog' | 'projects' | '' = '';
 
     let titleEl: HTMLElement | null = null;
+    let headerEl: HTMLElement | null = null;
     let isMobile = false;
     let menuOpen = false;
+    let hasContentBehind = false;
     let scrambleFrame: number | null = null;
+    let surfaceFrame: number | null = null;
 
     const chars = 'abcdefghijklmnopqrstuvwxyz';
     
@@ -73,8 +77,15 @@
             if (titleEl) {
                 scrambleText(titleEl, opening ? 'kershan arulneswaran' : 'k.a.', opening ? 750 : 450);
             }
+        } else if (currentPage === 'home') {
+            window.location.reload();
         } else {
-            window.location.assign('/');
+            if (scrambleFrame !== null) {
+                cancelAnimationFrame(scrambleFrame);
+                scrambleFrame = null;
+            }
+            if (titleEl) titleEl.textContent = 'k.a.';
+            void navigate('/');
         }
     }
 
@@ -85,12 +96,71 @@
         menuOpen = false;
     }
 
+    function handlePageLinkClick(
+        event: MouseEvent,
+        page: 'home' | 'about' | 'blog' | 'projects'
+    ) {
+        if (currentPage === page) {
+            event.preventDefault();
+            return;
+        }
+
+        if (page === 'home' && isMobile) {
+            if (scrambleFrame !== null) {
+                cancelAnimationFrame(scrambleFrame);
+                scrambleFrame = null;
+            }
+            menuOpen = false;
+            if (titleEl) titleEl.textContent = 'k.a.';
+            return;
+        }
+
+        closeMenu();
+    }
+
     function handleKeydown(event: KeyboardEvent) {
         if (event.key === 'Escape') closeMenu();
     }
 
     onMount(() => {
         const mobileQuery = window.matchMedia('(max-width: 820px)');
+        const syncHeaderSurface = () => {
+            surfaceFrame = null;
+
+            if (currentPage === 'home' || !headerEl) {
+                hasContentBehind = false;
+                return;
+            }
+
+            const contentRoot = document.querySelector<HTMLElement>('.about-container .content, main');
+            if (!contentRoot) {
+                hasContentBehind = false;
+                return;
+            }
+
+            const headerBounds = headerEl.getBoundingClientRect();
+            const textElements = Array.from(contentRoot.querySelectorAll<HTMLElement>(
+                'h1, h2, h3, h4, h5, h6, p, li, blockquote, pre'
+            ));
+            const textBounds = textElements
+                .map((element) => element.getBoundingClientRect())
+                .filter((bounds) => bounds.width > 0 && bounds.height > 0);
+
+            if (textBounds.length === 0) {
+                hasContentBehind = false;
+                return;
+            }
+
+            const firstTextTop = Math.min(...textBounds.map((bounds) => bounds.top));
+            const lastTextBottom = Math.max(...textBounds.map((bounds) => bounds.bottom));
+            hasContentBehind = firstTextTop <= headerBounds.bottom
+                && lastTextBottom >= headerBounds.top;
+        };
+        const queueHeaderSurfaceSync = () => {
+            if (surfaceFrame === null) {
+                surfaceFrame = requestAnimationFrame(syncHeaderSurface);
+            }
+        };
         const syncViewport = () => {
             isMobile = mobileQuery.matches;
             if (scrambleFrame !== null) {
@@ -103,21 +173,34 @@
             }
 
             if (titleEl) titleEl.textContent = 'k.a.';
+            queueHeaderSurfaceSync();
         };
 
         syncViewport();
         mobileQuery.addEventListener('change', syncViewport);
+        window.addEventListener('scroll', queueHeaderSurfaceSync, { passive: true });
+        window.addEventListener('resize', queueHeaderSurfaceSync);
+        document.fonts?.ready.then(queueHeaderSurfaceSync);
 
         return () => {
             mobileQuery.removeEventListener('change', syncViewport);
+            window.removeEventListener('scroll', queueHeaderSurfaceSync);
+            window.removeEventListener('resize', queueHeaderSurfaceSync);
             if (scrambleFrame !== null) cancelAnimationFrame(scrambleFrame);
+            if (surfaceFrame !== null) cancelAnimationFrame(surfaceFrame);
         };
     });
 </script>
 
 <svelte:window on:keydown={handleKeydown} />
 
-<header class:home-page={isHomePage} class="site-header">
+<header
+    bind:this={headerEl}
+    class:home-page={isHomePage}
+    class:has-content-behind={hasContentBehind}
+    class="site-header"
+    data-page={currentPage}
+>
     <div class="brand-control" data-open={menuOpen}>
         <button
             type="button"
@@ -145,25 +228,25 @@
                 class:current-page={currentPage === 'home'}
                 href="/"
                 aria-current={currentPage === 'home' ? 'page' : undefined}
-                on:click={closeMenu}
+                on:click={(event) => handlePageLinkClick(event, 'home')}
             >heyo!</a>
             <a
                 class:current-page={currentPage === 'about'}
                 href="/about"
                 aria-current={currentPage === 'about' ? 'page' : undefined}
-                on:click={closeMenu}
+                on:click={(event) => handlePageLinkClick(event, 'about')}
             >about</a>
             <a
                 class:current-page={currentPage === 'blog'}
                 href="/blog"
                 aria-current={currentPage === 'blog' ? 'page' : undefined}
-                on:click={closeMenu}
+                on:click={(event) => handlePageLinkClick(event, 'blog')}
             >blog</a>
             <a
                 class:current-page={currentPage === 'projects'}
                 href="/projects"
                 aria-current={currentPage === 'projects' ? 'page' : undefined}
-                on:click={closeMenu}
+                on:click={(event) => handlePageLinkClick(event, 'projects')}
             >projects</a>
         </div>
 
@@ -193,6 +276,27 @@
     justify-content: space-between;
     align-items: center;
     gap: clamp(1rem, 3vw, 3rem);
+}
+
+.site-header:not(.home-page) {
+    position: sticky;
+    top: 0;
+    isolation: isolate;
+}
+
+.site-header:not(.home-page)::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-color: var(--canvas);
+    opacity: 0;
+    transition: opacity 180ms ease;
+}
+
+.site-header:not(.home-page).has-content-behind::before {
+    opacity: 1;
 }
 
 .brand-control {
@@ -283,7 +387,7 @@
 .icon:hover {
     transform: translateY(-2px);
     color: var(--accent);
-    background: rgb(255 255 255 / 10%);
+    background: var(--icon-hover);
 }
 
 .page-links a:hover {

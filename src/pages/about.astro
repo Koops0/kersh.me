@@ -9,9 +9,9 @@ import About from '../components/About.svelte';
     <Header client:load currentPage="about" />
 
     <main>
-        <!-- About Section with Grape blob -->
+        <!-- About Section with Strawberry squircle -->
         <section class="section about-section">
-            <div class="bg-shape grape about-blob"></div>
+            <div class="bg-shape strawberry page-squircle about-blob" data-squircle="strawberry" transition:name="cinema-strawberry"></div>
             <About client:load />
         </section>
     </main>
@@ -22,11 +22,12 @@ import About from '../components/About.svelte';
 <style>
 .about-section {
     position: relative;
-    overflow: hidden;
+    overflow: visible;
 }
 
-/* Grape blob - large, centered */
+/* The transition must not alter this destination size. */
 .about-blob {
+    position: fixed;
     width: min(75vw, 50rem);
     aspect-ratio: 1;
     top: 50%;

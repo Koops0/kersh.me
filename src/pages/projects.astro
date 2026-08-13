@@ -2,31 +2,42 @@
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.svelte';
 import Footer from '../components/Footer.svelte';
+import Projects from '../components/Projects.svelte';
 ---
 
 <Layout>
     <Header client:load currentPage="projects" />
 
-    <main class="projects-page">
-        <h1>Projects</h1>
+    <main>
+        <section class="section projects-section">
+            <div class="bg-shape bondi-blue page-squircle projects-blob" data-squircle="bondi" transition:name="cinema-bondi"></div>
+            <Projects client:load />
+        </section>
     </main>
 
     <Footer client:load />
 </Layout>
 
 <style>
-.projects-page {
-    min-height: calc(100vh - 10rem);
-    min-height: calc(100svh - 10rem);
-    display: grid;
-    place-items: center;
-    padding: clamp(3rem, 8vw, 7rem) max(clamp(1rem, 5vw, 4.5rem), env(safe-area-inset-left));
-    padding-right: max(clamp(1rem, 5vw, 4.5rem), env(safe-area-inset-right));
+.projects-section {
+    position: relative;
+    overflow: visible;
 }
 
-h1 {
-    margin: 0;
-    font-size: clamp(2.5rem, 8vw, 6rem);
-    letter-spacing: 0.04em;
+.projects-blob {
+    position: fixed;
+    width: min(75vw, 50rem);
+    aspect-ratio: 1;
+    top: 50%;
+    left: 50%;
+    translate: -50% -50%;
+    border-radius: 45% 55% 60% 40% / 50% 35% 65% 50%;
+    animation: float 25s ease-in-out infinite, morph 18s ease-in-out infinite;
+}
+
+@media (max-width: 520px) {
+    .projects-blob {
+        width: min(78vw, 28rem);
+    }
 }
 </style>

@@ -5,6 +5,7 @@
     let professionEl: HTMLElement | null = null;
 
     const chars = 'abcdefghijklmnopqrstuvwxyz';
+    const professionText = 'Software Engineer. Destructor. Builder.';
     
     function scrambleText(element: HTMLElement, targetText: string, duration: number = 1500) {
         const startTime = Date.now();
@@ -45,25 +46,43 @@
         update();
     }
 
-    onMount(() => {
+    function startIntroAnimation(delayed: boolean) {
         if (
             window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
             window.matchMedia('(max-width: 820px)').matches
         ) {
-            return;
+            return [];
         }
 
-        const timers = [
+        return [
             setTimeout(() => {
                 if (fullNameEl) scrambleText(fullNameEl, 'KERSHAN\nARULNESWARAN', 2200);
-            }, 300),
+            }, delayed ? 300 : 0),
 
             setTimeout(() => {
-                if (professionEl) scrambleText(professionEl, 'Software Engineer', 1200);
-            }, 100)
+                if (professionEl) scrambleText(professionEl, professionText, 1200);
+            }, delayed ? 100 : 0)
         ];
+    }
 
-        return () => timers.forEach(clearTimeout);
+    onMount(() => {
+        let timers: ReturnType<typeof setTimeout>[] = [];
+        const returningFromAbout = document.documentElement.classList.contains('is-main-arriving');
+
+        const revealMain = () => {
+            timers = startIntroAnimation(false);
+        };
+
+        if (returningFromAbout) {
+            window.addEventListener('site:main-reveal', revealMain, { once: true });
+        } else {
+            timers = startIntroAnimation(true);
+        }
+
+        return () => {
+            window.removeEventListener('site:main-reveal', revealMain);
+            timers.forEach(clearTimeout);
+        };
     });
 </script>
 
@@ -74,7 +93,7 @@
     
     <div class="info-section">
         <div class="profession-row">
-            <p class="profession" bind:this={professionEl}>Software Engineer</p>
+            <p class="profession" bind:this={professionEl}>{professionText}</p>
             <nav class="sections">
                 <a href="/about">About</a>
                 <span class="separator">|</span>
@@ -134,13 +153,15 @@
         flex-direction: column;
         gap: 1rem;
         width: 100%;
+        transform: translateY(clamp(-1.25rem, -1.5vw, -0.5rem));
     }
     
     .profession-row {
         display: flex;
+        width: fit-content;
+        flex-direction: column;
         align-items: center;
         gap: clamp(0.75rem, 2vw, 1.5rem);
-        flex-wrap: wrap;
         min-width: 0;
     }
     
@@ -149,13 +170,15 @@
         font-weight: 600;
         margin: 0;
         color: var(--muted-ink);
-        text-align: left;
+        text-align: center;
         min-width: 14ch;
     }
     
     .sections {
+        display: flex;
         gap: clamp(0.75rem, 2vw, 1.5rem);
         align-items: center;
+        justify-content: center;
         flex-wrap: wrap;
     }
     
@@ -213,8 +236,6 @@
         }
 
         .profession-row {
-            align-items: flex-start;
-            flex-direction: column;
             gap: 1rem;
         }
 

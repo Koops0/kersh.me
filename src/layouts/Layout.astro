@@ -7,6 +7,8 @@ import { ClientRouter } from 'astro:transitions';
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+        <meta name="theme-color" content="#f4f1ea" media="(prefers-color-scheme: light)" />
+        <meta name="theme-color" content="#050709" media="(prefers-color-scheme: dark)" />
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <meta name="generator" content={Astro.generator} />
         <title>Kershan Arulneswaran</title>
@@ -28,7 +30,62 @@ import { ClientRouter } from 'astro:transitions';
             let loaderShownAt = performance.now();
             let loaderCycle = 0;
 
-            function showLoader() {
+            function normalizeRoute(pathname: string) {
+                return pathname === '/' ? pathname : pathname.replace(/\/$/, '');
+            }
+
+            const pageSquircles = new Map([
+                ['/about', 'strawberry'],
+                ['/blog', 'grape'],
+                ['/projects', 'bondi']
+            ]);
+
+            function getMainPageTransition(event?: Event) {
+                const navigation = event as Event & { from?: URL; to?: URL };
+                if (!navigation.from || !navigation.to) return;
+
+                const from = normalizeRoute(navigation.from.pathname);
+                const to = normalizeRoute(navigation.to.pathname);
+                if (from === '/' && pageSquircles.has(to)) {
+                    return { shape: pageSquircles.get(to), entering: true };
+                }
+                if (to === '/' && pageSquircles.has(from)) {
+                    return { shape: pageSquircles.get(from), entering: false };
+                }
+            }
+
+            function isSectionChange(event?: Event) {
+                const navigation = event as Event & { from?: URL; to?: URL };
+                if (!navigation.from || !navigation.to) return false;
+
+                const from = normalizeRoute(navigation.from.pathname);
+                const to = normalizeRoute(navigation.to.pathname);
+                return from !== to && pageSquircles.has(from) && pageSquircles.has(to);
+            }
+
+            function showLoader(event?: Event) {
+                const mainPageTransition = getMainPageTransition(event);
+                if (mainPageTransition) {
+                    const navigation = event as Event & { from?: URL; direction?: string };
+                    const direction = `${mainPageTransition.shape}-${mainPageTransition.entering ? 'in' : 'out'}`;
+                    navigation.direction = direction;
+                    if (mainPageTransition.entering) {
+                        document.documentElement.classList.add('is-main-departing');
+                    } else {
+                        document.documentElement.classList.add('is-page-departing');
+                    }
+                    return;
+                }
+
+                if (isSectionChange(event)) {
+                    const navigation = event as Event & { direction?: string };
+                    navigation.direction = 'section-change';
+                    document.documentElement.classList.add('is-section-departing');
+                    document.querySelector<HTMLElement>('.page-squircle')
+                        ?.style.setProperty('view-transition-name', 'cinema-page-squircle');
+                    return;
+                }
+
                 loaderCycle += 1;
                 loaderShownAt = performance.now();
                 const loader = document.getElementById('site-loader');
@@ -82,6 +139,8 @@ import { ClientRouter } from 'astro:transitions';
             let pointerClientY = -1;
             let squircleFrame = 0;
             let trackedSquircle: HTMLElement | undefined;
+            let grapeArrivalTimer = 0;
+            let aboutRevealTimer = 0;
 
             function clearSquircle(shape: HTMLElement) {
                 shape.classList.remove('is-pointer-active');
@@ -152,21 +211,137 @@ import { ClientRouter } from 'astro:transitions';
                 document.querySelectorAll<HTMLElement>('.bg-shape').forEach(clearSquircle);
             }
 
+            function settleArrivingSquircle() {
+                const direction = document.documentElement.getAttribute('data-astro-transition');
+                const shape = direction?.match(/^(strawberry|grape|bondi)-(?:in|out)$/)?.[1];
+                if (!shape && direction !== 'section-change') return;
+
+                const squircle = document.querySelector<HTMLElement>(
+                    direction === 'section-change'
+                        ? '.page-squircle[data-astro-transition-scope]'
+                        : `[data-squircle="${shape}"][data-astro-transition-scope]`
+                );
+                if (!squircle) return;
+
+                window.clearTimeout(grapeArrivalTimer);
+                squircle.classList.add('is-route-arrival');
+                grapeArrivalTimer = window.setTimeout(() => {
+                    squircle.classList.remove('is-route-arrival');
+                }, direction === 'section-change' ? 880 : 800);
+            }
+
+            function prepareRouteReveal(event: Event) {
+                const transition = event as Event & {
+                    direction?: string;
+                    newDocument?: Document;
+                    viewTransition?: { finished: Promise<unknown> };
+                };
+
+                const arrivingAtPage = /^(strawberry|grape|bondi)-in$/.test(transition.direction ?? '');
+                const arrivingAtMain = /^(strawberry|grape|bondi)-out$/.test(transition.direction ?? '');
+                const changingSection = transition.direction === 'section-change';
+                if (
+                    (!arrivingAtPage && !arrivingAtMain && !changingSection) ||
+                    window.matchMedia('(prefers-reduced-motion: reduce)').matches
+                ) return;
+
+                if (changingSection) {
+                    const arrivingClass = 'is-section-arriving';
+                    const revealingClass = 'is-section-revealing';
+                    transition.newDocument?.querySelector<HTMLElement>('.page-squircle')
+                        ?.style.setProperty('view-transition-name', 'cinema-page-squircle');
+                    transition.newDocument?.documentElement.classList.add(arrivingClass);
+
+                    const revealSection = () => {
+                        const root = document.documentElement;
+                        if (!root.classList.contains(arrivingClass)) return;
+
+                        root.classList.add(revealingClass);
+                        document.querySelector<HTMLElement>('.page-squircle')
+                            ?.style.removeProperty('view-transition-name');
+                        window.clearTimeout(aboutRevealTimer);
+                        aboutRevealTimer = window.setTimeout(() => {
+                            root.classList.remove(arrivingClass, revealingClass);
+                        }, 620);
+                    };
+
+                    if (transition.viewTransition) {
+                        void transition.viewTransition.finished.then(revealSection, revealSection);
+                    } else {
+                        window.setTimeout(revealSection, 840);
+                    }
+                    return;
+                }
+
+                const arrivingClass = arrivingAtPage ? 'is-page-arriving' : 'is-main-arriving';
+                const revealingClass = arrivingAtPage ? 'is-page-revealing' : 'is-main-revealing';
+                transition.newDocument?.documentElement.classList.add(arrivingClass);
+
+                const reveal = () => {
+                    const root = document.documentElement;
+                    if (!root.classList.contains(arrivingClass)) return;
+
+                    root.classList.add(revealingClass);
+                    if (arrivingAtMain) window.dispatchEvent(new Event('site:main-reveal'));
+                    window.clearTimeout(aboutRevealTimer);
+                    aboutRevealTimer = window.setTimeout(() => {
+                        root.classList.remove(arrivingClass, revealingClass);
+                    }, 720);
+                };
+
+                if (transition.viewTransition) {
+                    void transition.viewTransition.finished.then(reveal, reveal);
+                } else {
+                    window.setTimeout(reveal, 760);
+                }
+            }
+
             window.addEventListener('pointermove', moveSquircles, { passive: true });
             squircleMedia.addEventListener('change', resetSquircles);
-            document.addEventListener('astro:page-load', resetSquircles);
+            document.addEventListener('astro:before-swap', prepareRouteReveal);
+            document.addEventListener('astro:after-swap', settleArrivingSquircle);
+            document.addEventListener('astro:page-load', () => {
+                document.documentElement.classList.remove(
+                    'is-main-departing',
+                    'is-page-departing',
+                    'is-section-departing'
+                );
+                resetSquircles();
+            });
         </script>
     </body>
 </html>
 
 <style is:global>
 :root {
+    color-scheme: light dark;
     --font-display: 'Archivo', 'Arial Black', sans-serif;
     --font-body: 'Red Hat Mono', ui-monospace, 'SFMono-Regular', Consolas, monospace;
-    --ink: #f3f7f6;
-    --muted-ink: rgb(243 247 246 / 68%);
-    --accent: #72d6e5;
-    --cinema-black: #050709;
+    --ink: #172126;
+    --muted-ink: rgb(23 33 38 / 68%);
+    --accent: #006b7c;
+    --canvas: #f4f1ea;
+    --backdrop: radial-gradient(ellipse at 50% 35%, #ffffff 0%, #f4f1ea 55%, #e6e1d7 100%);
+    --loader-track: rgb(23 33 38 / 18%);
+    --icon-hover: rgb(23 33 38 / 8%);
+    --shape-highlight: rgb(255 255 255 / 62%);
+    --shape-shade: rgb(28 35 39 / 18%);
+    --shape-shadow: rgb(42 48 51 / 18%);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --ink: #f3f7f6;
+        --muted-ink: rgb(243 247 246 / 68%);
+        --accent: #72d6e5;
+        --canvas: #050709;
+        --backdrop: radial-gradient(ellipse at 50% 35%, #121a20 0%, #080c0f 52%, #030405 100%);
+        --loader-track: rgb(243 247 246 / 18%);
+        --icon-hover: rgb(255 255 255 / 10%);
+        --shape-highlight: rgb(255 255 255 / 42%);
+        --shape-shade: rgb(0 0 0 / 28%);
+        --shape-shadow: rgb(0 0 0 / 28%);
+    }
 }
 
 html {
@@ -194,8 +369,8 @@ body {
     font-family: var(--font-body);
     line-height: 1.5;
     color: var(--ink);
-    background-color: var(--cinema-black);
-    background-image: radial-gradient(ellipse at 50% 35%, #121a20 0%, #080c0f 52%, #030405 100%);
+    background-color: var(--canvas);
+    background-image: var(--backdrop);
     background-attachment: fixed;
     position: relative;
     overflow-x: hidden;
@@ -227,7 +402,7 @@ select {
     justify-items: center;
     gap: 1.25rem;
     color: var(--ink);
-    background: var(--cinema-black);
+    background: var(--canvas);
     opacity: 1;
     transition: opacity 0.18s ease;
 }
@@ -259,7 +434,7 @@ select {
     width: 7rem;
     height: 1px;
     overflow: hidden;
-    background: rgb(243 247 246 / 18%);
+    background: var(--loader-track);
 }
 
 .loader-track span {
@@ -313,14 +488,449 @@ button {
     pointer-events: none;
     opacity: 0.66;
     box-shadow:
-        inset 0 1px 0 rgb(255 255 255 / 42%),
-        inset -1.5rem -2rem 3rem rgb(0 0 0 / 28%),
-        0 1.5rem 5rem rgb(0 0 0 / 28%);
+        inset 0 1px 0 var(--shape-highlight),
+        inset -1.5rem -2rem 3rem var(--shape-shade),
+        0 1.5rem 5rem var(--shape-shadow);
     transition: border-radius 140ms ease-out;
 }
 
 .bg-shape.is-pointer-active {
     border-radius: var(--deform-radius) !important;
+}
+
+.bg-shape.is-route-arrival {
+    animation: none !important;
+    transition: none !important;
+    transform: translate(0, 0) scale(1) rotate(0deg);
+    border-radius: 63% 37% 54% 46% / 55% 48% 52% 45% !important;
+}
+
+::view-transition-group(cinema-page-squircle) {
+    z-index: 20;
+}
+
+/* Main ↔ page transitions use the matching homepage squircle. */
+:is([data-astro-transition='strawberry-in'], [data-astro-transition='strawberry-out'])::view-transition-group(cinema-strawberry),
+:is([data-astro-transition='grape-in'], [data-astro-transition='grape-out'])::view-transition-group(cinema-grape),
+:is([data-astro-transition='bondi-in'], [data-astro-transition='bondi-out'])::view-transition-group(cinema-bondi) {
+    animation-duration: 760ms;
+    animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+    z-index: 20;
+}
+
+:is([data-astro-transition='strawberry-in'], [data-astro-transition='strawberry-out'])::view-transition-image-pair(cinema-strawberry),
+:is([data-astro-transition='grape-in'], [data-astro-transition='grape-out'])::view-transition-image-pair(cinema-grape),
+:is([data-astro-transition='bondi-in'], [data-astro-transition='bondi-out'])::view-transition-image-pair(cinema-bondi) {
+    overflow: hidden;
+    opacity: 0.66;
+    box-shadow:
+        inset 0 1px 0 var(--shape-highlight),
+        inset -1.5rem -2rem 3rem var(--shape-shade),
+        0 1.5rem 5rem var(--shape-shadow);
+    animation: cinema-grape-deform 760ms cubic-bezier(0.76, 0, 0.24, 1) both;
+}
+
+:is([data-astro-transition='strawberry-in'], [data-astro-transition='strawberry-out'])::view-transition-image-pair(cinema-strawberry) {
+    background: radial-gradient(circle at 30% 24%, #ffd0dd 0%, #e8587b 25%, #9f2949 66%, #501326 100%);
+}
+
+:is([data-astro-transition='grape-in'], [data-astro-transition='grape-out'])::view-transition-image-pair(cinema-grape) {
+    background: radial-gradient(circle at 30% 24%, #e1d0ff 0%, #8967af 25%, #553577 66%, #2c193f 100%);
+}
+
+:is([data-astro-transition='bondi-in'], [data-astro-transition='bondi-out'])::view-transition-image-pair(cinema-bondi) {
+    background: radial-gradient(circle at 30% 24%, #b7f6ff 0%, #16b7d1 25%, #006b84 66%, #003947 100%);
+}
+
+[data-astro-transition='strawberry-out']::view-transition-image-pair(cinema-strawberry),
+[data-astro-transition='grape-out']::view-transition-image-pair(cinema-grape),
+[data-astro-transition='bondi-out']::view-transition-image-pair(cinema-bondi) {
+    animation-direction: reverse;
+}
+
+:is([data-astro-transition='strawberry-in'], [data-astro-transition='strawberry-out'])::view-transition-old(cinema-strawberry),
+:is([data-astro-transition='strawberry-in'], [data-astro-transition='strawberry-out'])::view-transition-new(cinema-strawberry),
+:is([data-astro-transition='grape-in'], [data-astro-transition='grape-out'])::view-transition-old(cinema-grape),
+:is([data-astro-transition='grape-in'], [data-astro-transition='grape-out'])::view-transition-new(cinema-grape),
+:is([data-astro-transition='bondi-in'], [data-astro-transition='bondi-out'])::view-transition-old(cinema-bondi),
+:is([data-astro-transition='bondi-in'], [data-astro-transition='bondi-out'])::view-transition-new(cinema-bondi) {
+    animation: none;
+    opacity: 0;
+    mix-blend-mode: normal;
+}
+
+:is(
+    [data-astro-transition='strawberry-in'],
+    [data-astro-transition='strawberry-out'],
+    [data-astro-transition='grape-in'],
+    [data-astro-transition='grape-out'],
+    [data-astro-transition='bondi-in'],
+    [data-astro-transition='bondi-out']
+)::view-transition-old(root),
+:is(
+    [data-astro-transition='strawberry-in'],
+    [data-astro-transition='strawberry-out'],
+    [data-astro-transition='grape-in'],
+    [data-astro-transition='grape-out'],
+    [data-astro-transition='bondi-in'],
+    [data-astro-transition='bondi-out']
+)::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
+}
+
+:is([data-astro-transition$='-in'], [data-astro-transition$='-out'])::view-transition-old(root) {
+    opacity: 1;
+}
+
+:is([data-astro-transition$='-in'], [data-astro-transition$='-out'])::view-transition-new(root) {
+    opacity: 0;
+}
+
+[data-astro-transition='section-change']::view-transition-old(root),
+[data-astro-transition='section-change']::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
+}
+
+[data-astro-transition='section-change']::view-transition-old(root) {
+    opacity: 1;
+}
+
+[data-astro-transition='section-change']::view-transition-new(root) {
+    opacity: 0;
+}
+
+html.is-section-departing .site-header,
+html.is-section-arriving .site-header {
+    view-transition-name: cinema-full-header;
+}
+
+::view-transition-group(cinema-full-header) {
+    animation: none;
+    z-index: 100;
+}
+
+::view-transition-old(cinema-full-header),
+::view-transition-new(cinema-full-header) {
+    animation: none;
+    mix-blend-mode: normal;
+}
+
+::view-transition-old(cinema-full-header) {
+    opacity: 1;
+}
+
+::view-transition-new(cinema-full-header) {
+    opacity: 0;
+}
+
+/* Section changes are deliberately sequential: color first, geometry second. */
+[data-astro-transition='section-change']::view-transition-group(cinema-page-squircle) {
+    animation-delay: 340ms;
+    animation-duration: 500ms;
+    animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+    animation-fill-mode: both;
+}
+
+[data-astro-transition='section-change']::view-transition-image-pair(cinema-page-squircle) {
+    overflow: hidden;
+    background: transparent;
+    opacity: 1;
+    box-shadow: none;
+    animation: section-squircle-settle 500ms 340ms cubic-bezier(0.76, 0, 0.24, 1) both;
+}
+
+[data-astro-transition='section-change']::view-transition-old(cinema-page-squircle) {
+    animation: section-squircle-color-out 340ms ease-in-out both;
+    opacity: 1;
+}
+
+[data-astro-transition='section-change']::view-transition-new(cinema-page-squircle) {
+    animation: section-squircle-color-in 340ms ease-in-out both;
+    opacity: 1;
+}
+
+::view-transition-group(cinema-header-links) {
+    animation: none;
+    z-index: 100;
+}
+
+::view-transition-old(cinema-header-links),
+::view-transition-new(cinema-header-links) {
+    animation: none;
+    mix-blend-mode: normal;
+}
+
+[data-astro-transition$='-in']::view-transition-new(cinema-header-links) {
+    animation: header-links-fade-in 760ms cubic-bezier(0.76, 0, 0.24, 1) both;
+}
+
+[data-astro-transition$='-out']::view-transition-old(cinema-header-links) {
+    animation: header-links-fade-out 760ms cubic-bezier(0.76, 0, 0.24, 1) both;
+}
+
+html.is-page-arriving .site-header .page-links,
+html.is-page-departing .site-header .page-links {
+    view-transition-name: cinema-header-links;
+}
+
+::view-transition-group(cinema-bondi),
+::view-transition-group(cinema-strawberry),
+::view-transition-group(cinema-grape),
+::view-transition-group(cinema-lime),
+::view-transition-group(cinema-tangerine) {
+    animation-duration: 760ms;
+    animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+    z-index: 10;
+}
+
+[data-astro-transition='strawberry-in']::view-transition-old(cinema-bondi),
+[data-astro-transition='strawberry-in']::view-transition-old(cinema-grape),
+[data-astro-transition='strawberry-in']::view-transition-old(cinema-lime),
+[data-astro-transition='strawberry-in']::view-transition-old(cinema-tangerine),
+[data-astro-transition='grape-in']::view-transition-old(cinema-bondi),
+[data-astro-transition='grape-in']::view-transition-old(cinema-strawberry),
+[data-astro-transition='grape-in']::view-transition-old(cinema-lime),
+[data-astro-transition='grape-in']::view-transition-old(cinema-tangerine),
+[data-astro-transition='bondi-in']::view-transition-old(cinema-strawberry),
+[data-astro-transition='bondi-in']::view-transition-old(cinema-grape),
+[data-astro-transition='bondi-in']::view-transition-old(cinema-lime),
+[data-astro-transition='bondi-in']::view-transition-old(cinema-tangerine) {
+    animation: home-squircle-fade-out 460ms 80ms ease-in both;
+    mix-blend-mode: normal;
+}
+
+[data-astro-transition='strawberry-out']::view-transition-new(cinema-bondi),
+[data-astro-transition='strawberry-out']::view-transition-new(cinema-grape),
+[data-astro-transition='strawberry-out']::view-transition-new(cinema-lime),
+[data-astro-transition='strawberry-out']::view-transition-new(cinema-tangerine),
+[data-astro-transition='grape-out']::view-transition-new(cinema-bondi),
+[data-astro-transition='grape-out']::view-transition-new(cinema-strawberry),
+[data-astro-transition='grape-out']::view-transition-new(cinema-lime),
+[data-astro-transition='grape-out']::view-transition-new(cinema-tangerine),
+[data-astro-transition='bondi-out']::view-transition-new(cinema-strawberry),
+[data-astro-transition='bondi-out']::view-transition-new(cinema-grape),
+[data-astro-transition='bondi-out']::view-transition-new(cinema-lime),
+[data-astro-transition='bondi-out']::view-transition-new(cinema-tangerine) {
+    animation: home-squircle-fade-in 480ms 180ms ease-out both;
+    mix-blend-mode: normal;
+}
+
+[data-astro-transition='strawberry-in']::view-transition-group(cinema-strawberry),
+[data-astro-transition='bondi-in']::view-transition-group(cinema-bondi) {
+    z-index: 20;
+}
+
+[data-astro-transition='grape-in']::view-transition-group(cinema-grape) {
+    z-index: 30;
+}
+
+/* Explicit return compositing: preserve the intended physical overlaps. */
+[data-astro-transition='strawberry-out']::view-transition-group(cinema-strawberry) {
+    z-index: 12;
+}
+
+[data-astro-transition='strawberry-out']::view-transition-group(cinema-tangerine) {
+    z-index: 24;
+}
+
+[data-astro-transition='grape-out']::view-transition-group(cinema-grape) {
+    z-index: 30;
+}
+
+[data-astro-transition='grape-out']::view-transition-group(cinema-bondi) {
+    z-index: 10;
+}
+
+[data-astro-transition='bondi-out']::view-transition-group(cinema-bondi) {
+    z-index: 10;
+}
+
+[data-astro-transition='bondi-out']::view-transition-group(cinema-grape),
+[data-astro-transition='bondi-out']::view-transition-group(cinema-lime) {
+    z-index: 24;
+}
+
+html.is-page-arriving .about-container,
+html.is-page-arriving .blog-container,
+html.is-page-arriving .projects-container,
+html.is-page-arriving .site-footer {
+    opacity: 0;
+    transform: translateY(-1.4rem);
+}
+
+html.is-page-arriving.is-page-revealing .about-container,
+html.is-page-arriving.is-page-revealing .blog-container,
+html.is-page-arriving.is-page-revealing .projects-container,
+html.is-page-arriving.is-page-revealing .site-footer {
+    animation: about-content-slide-down 560ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+html.is-page-arriving.is-page-revealing .site-footer {
+    animation-delay: 60ms;
+}
+
+html.is-main-departing .full-name,
+html.is-main-departing .profession,
+html.is-main-departing .sections,
+html.is-main-departing .site-footer {
+    opacity: 0;
+}
+
+html.is-page-departing .about-container,
+html.is-page-departing .blog-container,
+html.is-page-departing .projects-container,
+html.is-page-departing .site-footer {
+    opacity: 0;
+}
+
+html.is-section-departing .about-container,
+html.is-section-departing .blog-container,
+html.is-section-departing .projects-container,
+html.is-section-departing .site-footer {
+    opacity: 0;
+}
+
+html.is-section-arriving .about-container,
+html.is-section-arriving .blog-container,
+html.is-section-arriving .projects-container,
+html.is-section-arriving .site-footer {
+    opacity: 0;
+    transform: translateY(0.85rem);
+}
+
+html.is-section-arriving.is-section-revealing .about-container,
+html.is-section-arriving.is-section-revealing .blog-container,
+html.is-section-arriving.is-section-revealing .projects-container,
+html.is-section-arriving.is-section-revealing .site-footer {
+    animation: section-content-arrive 480ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+html.is-section-arriving.is-section-revealing .site-footer {
+    animation-delay: 50ms;
+}
+
+html.is-main-departing .site-header::before,
+html.is-page-departing .site-header::before,
+html.is-main-arriving .site-header::before,
+html.is-page-arriving .site-header::before,
+html.is-section-departing .site-header::before,
+html.is-section-arriving .site-header::before {
+    opacity: 0 !important;
+    transition: none !important;
+}
+
+html.is-main-arriving .full-name,
+html.is-main-arriving .profession,
+html.is-main-arriving .sections,
+html.is-main-arriving .site-footer {
+    opacity: 0;
+}
+
+html.is-main-arriving.is-main-revealing .full-name,
+html.is-main-arriving.is-main-revealing .profession {
+    opacity: 1;
+}
+
+html.is-main-arriving.is-main-revealing .site-footer {
+    animation: main-chrome-fade-in 360ms ease-out both;
+}
+
+html.is-main-arriving.is-main-revealing .sections {
+    animation: main-links-fade-in 520ms 140ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes about-content-slide-down {
+    from {
+        opacity: 0;
+        transform: translateY(-1.4rem);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes main-chrome-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes main-links-fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(0.55rem);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes home-squircle-fade-out {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+@keyframes home-squircle-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes section-squircle-color-out {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+@keyframes section-squircle-color-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes section-squircle-settle {
+    0%, 100% {
+        border-radius: 63% 37% 54% 46% / 55% 48% 52% 45%;
+    }
+    50% {
+        border-radius: 47% 53% 64% 36% / 42% 58% 44% 56%;
+    }
+}
+
+@keyframes section-content-arrive {
+    from {
+        opacity: 0;
+        transform: translateY(0.85rem);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes header-links-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes header-links-fade-out {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+@keyframes cinema-grape-deform {
+    0% {
+        border-radius: 63% 37% 54% 46% / 55% 48% 52% 45%;
+    }
+    32% {
+        border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+    }
+    66% {
+        border-radius: 70% 30% 50% 50% / 30% 65% 35% 70%;
+    }
+    100% {
+        border-radius: 63% 37% 54% 46% / 55% 48% 52% 45%;
+    }
 }
 
 /* Make header transparent with no background */
@@ -409,6 +1019,11 @@ section > *:not(.bg-shape) {
 @media (max-width: 820px) {
     body {
         background-attachment: scroll;
+    }
+
+    html.is-page-arriving .site-header .page-links,
+    html.is-page-departing .site-header .page-links {
+        view-transition-name: none;
     }
 
     .bg-shape {
