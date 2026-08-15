@@ -7,12 +7,13 @@
     import FaAddressBook from 'svelte-icons/fa/FaAddressBook.svelte'
 
     export let isHomePage = false;
-    export let currentPage: 'home' | 'about' | 'blog' | 'projects' | '' = '';
+    export let currentPage: 'home' | 'about' | 'blog' | 'experience' | '' = '';
 
     let titleEl: HTMLElement | null = null;
     let headerEl: HTMLElement | null = null;
     let isMobile = false;
     let menuOpen = false;
+    let isNavigating = false;
     let hasContentBehind = false;
     let scrambleFrame: number | null = null;
     let surfaceFrame: number | null = null;
@@ -96,22 +97,28 @@
         menuOpen = false;
     }
 
+    function resetBrandImmediately() {
+        if (scrambleFrame !== null) {
+            cancelAnimationFrame(scrambleFrame);
+            scrambleFrame = null;
+        }
+        menuOpen = false;
+        isNavigating = true;
+        if (titleEl) titleEl.textContent = 'k.a.';
+        headerEl?.classList.add('is-navigating');
+    }
+
     function handlePageLinkClick(
         event: MouseEvent,
-        page: 'home' | 'about' | 'blog' | 'projects'
+        page: 'home' | 'about' | 'blog' | 'experience'
     ) {
         if (currentPage === page) {
             event.preventDefault();
             return;
         }
 
-        if (page === 'home' && isMobile) {
-            if (scrambleFrame !== null) {
-                cancelAnimationFrame(scrambleFrame);
-                scrambleFrame = null;
-            }
-            menuOpen = false;
-            if (titleEl) titleEl.textContent = 'k.a.';
+        if (isMobile) {
+            resetBrandImmediately();
             return;
         }
 
@@ -124,6 +131,9 @@
 
     onMount(() => {
         const mobileQuery = window.matchMedia('(max-width: 820px)');
+        const resetMobileBrandForNavigation = () => {
+            if (mobileQuery.matches) resetBrandImmediately();
+        };
         const syncHeaderSurface = () => {
             surfaceFrame = null;
 
@@ -180,12 +190,14 @@
         mobileQuery.addEventListener('change', syncViewport);
         window.addEventListener('scroll', queueHeaderSurfaceSync, { passive: true });
         window.addEventListener('resize', queueHeaderSurfaceSync);
+        document.addEventListener('astro:before-preparation', resetMobileBrandForNavigation);
         document.fonts?.ready.then(queueHeaderSurfaceSync);
 
         return () => {
             mobileQuery.removeEventListener('change', syncViewport);
             window.removeEventListener('scroll', queueHeaderSurfaceSync);
             window.removeEventListener('resize', queueHeaderSurfaceSync);
+            document.removeEventListener('astro:before-preparation', resetMobileBrandForNavigation);
             if (scrambleFrame !== null) cancelAnimationFrame(scrambleFrame);
             if (surfaceFrame !== null) cancelAnimationFrame(surfaceFrame);
         };
@@ -198,6 +210,7 @@
     bind:this={headerEl}
     class:home-page={isHomePage}
     class:has-content-behind={hasContentBehind}
+    class:is-navigating={isNavigating}
     class="site-header"
     data-page={currentPage}
 >
@@ -243,11 +256,11 @@
                 on:click={(event) => handlePageLinkClick(event, 'blog')}
             >blog</a>
             <a
-                class:current-page={currentPage === 'projects'}
-                href="/projects"
-                aria-current={currentPage === 'projects' ? 'page' : undefined}
-                on:click={(event) => handlePageLinkClick(event, 'projects')}
-            >projects</a>
+                class:current-page={currentPage === 'experience'}
+                href="/experience"
+                aria-current={currentPage === 'experience' ? 'page' : undefined}
+                on:click={(event) => handlePageLinkClick(event, 'experience')}
+            >experience</a>
         </div>
 
         <div class="social-links">
@@ -458,6 +471,21 @@
         transition-delay: 0s;
     }
 
+    .site-header.is-navigating .site-nav {
+        max-height: 0;
+        margin-top: 0;
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        transform: translateY(-0.25rem);
+        transition: none;
+    }
+
+    .site-header.is-navigating .brand {
+        font-size: 2.25rem !important;
+        transition: none !important;
+    }
+
     .page-links,
     .home-page .page-links {
         width: 100%;
@@ -500,6 +528,10 @@
 
     .brand-control[data-open='true'] .brand {
         font-size: 0.95rem;
+    }
+
+    .site-header.is-navigating .brand {
+        font-size: 2rem !important;
     }
 }
 </style>

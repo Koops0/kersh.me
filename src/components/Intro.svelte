@@ -99,7 +99,7 @@
                 <span class="separator">|</span>
                 <a href="/blog">Blog</a>
                 <span class="separator">|</span>
-                <a href="/projects">Projects</a>
+                <a href="/experience">Experience</a>
             </nav>
         </div>
     </div>

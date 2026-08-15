@@ -9,7 +9,7 @@ import { ClientRouter } from 'astro:transitions';
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
         <meta name="theme-color" content="#f4f1ea" media="(prefers-color-scheme: light)" />
         <meta name="theme-color" content="#050709" media="(prefers-color-scheme: dark)" />
-        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <link rel="icon" type="image/png" href="/favicon.png?v=1" />
         <meta name="generator" content={Astro.generator} />
         <title>Kershan Arulneswaran</title>
         <ClientRouter />
@@ -37,7 +37,7 @@ import { ClientRouter } from 'astro:transitions';
             const pageSquircles = new Map([
                 ['/about', 'strawberry'],
                 ['/blog', 'grape'],
-                ['/projects', 'bondi']
+                ['/experience', 'bondi']
             ]);
 
             function getMainPageTransition(event?: Event) {
@@ -675,6 +675,32 @@ html.is-page-departing .site-header .page-links {
     view-transition-name: cinema-header-links;
 }
 
+html.is-main-departing .site-header .brand,
+html.is-page-departing .site-header .brand,
+html.is-main-arriving .site-header .brand,
+html.is-page-arriving .site-header .brand {
+    view-transition-name: cinema-brand;
+}
+
+::view-transition-group(cinema-brand) {
+    animation: none;
+    z-index: 110;
+}
+
+::view-transition-old(cinema-brand),
+::view-transition-new(cinema-brand) {
+    animation: none;
+    mix-blend-mode: normal;
+}
+
+::view-transition-old(cinema-brand) {
+    opacity: 1;
+}
+
+::view-transition-new(cinema-brand) {
+    opacity: 0;
+}
+
 ::view-transition-group(cinema-bondi),
 ::view-transition-group(cinema-strawberry),
 ::view-transition-group(cinema-grape),
@@ -754,7 +780,7 @@ html.is-page-departing .site-header .page-links {
 
 html.is-page-arriving .about-container,
 html.is-page-arriving .blog-container,
-html.is-page-arriving .projects-container,
+html.is-page-arriving .experience-container,
 html.is-page-arriving .site-footer {
     opacity: 0;
     transform: translateY(-1.4rem);
@@ -762,7 +788,7 @@ html.is-page-arriving .site-footer {
 
 html.is-page-arriving.is-page-revealing .about-container,
 html.is-page-arriving.is-page-revealing .blog-container,
-html.is-page-arriving.is-page-revealing .projects-container,
+html.is-page-arriving.is-page-revealing .experience-container,
 html.is-page-arriving.is-page-revealing .site-footer {
     animation: about-content-slide-down 560ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
@@ -780,21 +806,21 @@ html.is-main-departing .site-footer {
 
 html.is-page-departing .about-container,
 html.is-page-departing .blog-container,
-html.is-page-departing .projects-container,
+html.is-page-departing .experience-container,
 html.is-page-departing .site-footer {
     opacity: 0;
 }
 
 html.is-section-departing .about-container,
 html.is-section-departing .blog-container,
-html.is-section-departing .projects-container,
+html.is-section-departing .experience-container,
 html.is-section-departing .site-footer {
     opacity: 0;
 }
 
 html.is-section-arriving .about-container,
 html.is-section-arriving .blog-container,
-html.is-section-arriving .projects-container,
+html.is-section-arriving .experience-container,
 html.is-section-arriving .site-footer {
     opacity: 0;
     transform: translateY(0.85rem);
@@ -802,7 +828,7 @@ html.is-section-arriving .site-footer {
 
 html.is-section-arriving.is-section-revealing .about-container,
 html.is-section-arriving.is-section-revealing .blog-container,
-html.is-section-arriving.is-section-revealing .projects-container,
+html.is-section-arriving.is-section-revealing .experience-container,
 html.is-section-arriving.is-section-revealing .site-footer {
     animation: section-content-arrive 480ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
