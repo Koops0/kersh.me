@@ -7,7 +7,7 @@
         <h1>Heyo!</h1>
         <p>My name is Kershan Arulneswaran.</p>
         <p>
-            I'm the guy who intentionally breaks low- and high level shit,
+            I'm the guy who intentionally breaks low- and high-level shit,
             because I'd rather find out exactly how something fails before the
             real world does it for me.
         </p>
@@ -17,15 +17,16 @@
             systems without pretending those layers exist in separate universes.
         </p>
         <p>
-            I'm the guy who likes software most when it has to deal with actual
-            hardware, actual constraints, and all the weird shit that happens
-            when reality doesn't care what the documentation promised.
+            I'm the guy who likes software most when it deals with actual
+            hardware. This includes hardware constraints, and all the weird shit
+            that happens when reality doesn't care what the documentation
+            promised.
         </p>
         <p>
-            I'm the guy who treats debugging like engineering: reproduce the
-            failure, isolate it, push it until something gives, figure out which
-            assumptions were right and what were bullshit, and make sure the
-            next version is harder to kill.
+            I'm the guy who treats debugging like engineering. This means that I
+            reproduce the failure, isolate it, push it until something gives,
+            figure out what assumptions were right and what assumptions were
+            bullshit, and make sure the next version is harder to kill.
         </p>
         <p>
             I'm the guy who genuinely loves AI and machine learning, but hates
@@ -35,10 +36,9 @@
         </p>
         <p>
             I'm the guy who still builds things because they're fun, whether
-            that's experimenting with computer vision, making software play
-            games for me, messing around with AI, or spending an unreasonable
-            amount of time making a boring solution way cooler than it needed to
-            be.
+            that's experimenting with computer vision and AI, getting agents to
+            play games for me, or spending an unreasonable amount of time making
+            a boring solution way cooler than it needs to be.
         </p>
         <p>
             I'm the guy who loves robotics and engineering as much as I love
@@ -47,13 +47,14 @@
             behind them.
         </p>
         <p>
-            I'm also the guy who likes the people side of all this too: coffee
-            chats, job events, hackathons, random conversations, swapping ideas,
-            hearing how other people got where they are, and occasionally
-            turning a five-minute introduction into a friendship, a
-            collaboration, or a completely different way of looking at
-            something.
+            I'm also the guy who loves the people side of this too. Let me tell
+            you something. I love coffee chats, job events, hackathons, random
+            conversations, swapping ideas, and hearing how people got where they
+            are. Sometimes it's just a good conversation, and sometimes it turns
+            into a friendship, a collaboration, or a connection that ends up
+            meaning much, much more.
         </p>
+
         <p>
             I'm the guy who wants to work on difficult systems, ambitious
             projects, and the kind of engineering problems where "good enough"

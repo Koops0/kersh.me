@@ -1,4 +1,5 @@
 <script lang="ts">
+    import ProjectItem from './ProjectItem.svelte';
     import WorkExperienceItem from './WorkExperienceItem.svelte';
 
     type WorkExperience = {
@@ -11,6 +12,14 @@
         description?: string;
     };
 
+    type Project = {
+        name: string;
+        demo: string;
+        github: string;
+        description: string;
+        years: string;
+    };
+
     const workExperience: WorkExperience[] = [
         {
             icon: '/images/mdaspace_logo.jpeg',
@@ -18,7 +27,7 @@
             position: 'Software Engineer Intern',
             company: 'MDA Space',
             description: 'canadarm2 ground and canadarm3 flight software development',
-            years: '2025 - 2026',
+            years: '2025-2026',
             website: 'https://mda.space/'
         },
         {
@@ -49,6 +58,107 @@
             website: 'https://www.ot-robotics.com'
         }
     ];
+
+    const projects: Project[] = [
+        {
+         name: 'Project name',
+        demo: 'https://example.com',
+        github: 'https://github.com/Koops0/example',
+        description: 'What the project does and how it was built',
+        years: '2025 - 2026'
+        },
+        {
+         name: 'Project name',
+        demo: 'https://example.com',
+        github: 'https://github.com/Koops0/example',
+        description: 'What the project does and how it was built',
+        years: '2025 - 2026'
+        },
+        {
+         name: 'Project name',
+        demo: 'https://example.com',
+        github: 'https://github.com/Koops0/example',
+        description: 'What the project does and how it was built',
+        years: '2025 - 2026'
+        },
+        {
+         name: 'Project name',
+        demo: 'https://example.com',
+        github: 'https://github.com/Koops0/example',
+        description: 'What the project does and how it was built',
+        years: '2025 - 2026'
+        },
+        {
+         name: 'Project name',
+        demo: 'https://example.com',
+        github: 'https://github.com/Koops0/example',
+        description: 'What the project does and how it was built',
+        years: '2025 - 2026'
+        },
+        {
+         name: 'Project name',
+        demo: 'https://example.com',
+        github: 'https://github.com/Koops0/example',
+        description: 'What the project does and how it was built',
+        years: '2025 - 2026'
+        },
+        {
+         name: 'Project name',
+        demo: 'https://example.com',
+        github: 'https://github.com/Koops0/example',
+        description: 'What the project does and how it was built',
+        years: '2025 - 2026'
+        },
+        {
+         name: 'Project name',
+        demo: 'https://example.com',
+        github: 'https://github.com/Koops0/example',
+        description: 'What the project does and how it was built',
+        years: '2025 - 2026'
+        },
+        {
+         name: 'Project name',
+        demo: 'https://example.com',
+        github: 'https://github.com/Koops0/example',
+        description: 'What the project does and how it was built',
+        years: '2025 - 2026'
+        },
+        {
+         name: 'Project name',
+        demo: 'https://example.com',
+        github: 'https://github.com/Koops0/example',
+        description: 'What the project does and how it was built',
+        years: '2025 - 2026'
+        },
+        {
+         name: 'Project name',
+        demo: 'https://example.com',
+        github: 'https://github.com/Koops0/example',
+        description: 'What the project does and how it was built',
+        years: '2025 - 2026'
+        },
+        {
+         name: 'Project name',
+        demo: 'https://example.com',
+        github: 'https://github.com/Koops0/example',
+        description: 'What the project does and how it was built',
+        years: '2025 - 2026'
+        },
+        {
+         name: 'Project name',
+        demo: 'https://example.com',
+        github: 'https://github.com/Koops0/example',
+        description: 'What the project does and how it was built',
+        years: '2025 - 2026'
+        },
+        {
+         name: 'Project name',
+        demo: 'https://example.com',
+        github: 'https://github.com/Koops0/example',
+        description: 'What the project does and how it was built',
+        years: '2025 - 2026'
+        }
+    ];
 </script>
 
 <div class="experience-container">
@@ -67,6 +177,12 @@
 
         <section class="subsection" aria-labelledby="projects-heading">
             <h2 id="projects-heading">Projects</h2>
+
+            <div class="project-list">
+                {#each projects as project}
+                    <ProjectItem {...project} />
+                {/each}
+            </div>
         </section>
     </div>
 </div>
@@ -119,7 +235,8 @@
         line-height: 1.1;
     }
 
-    .work-list {
+    .work-list,
+    .project-list {
         margin-top: clamp(1.75rem, 3vw, 2.5rem);
         display: grid;
         gap: clamp(1.5rem, 3vw, 2.25rem);

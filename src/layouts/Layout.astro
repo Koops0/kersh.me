@@ -63,33 +63,52 @@ import { ClientRouter } from 'astro:transitions';
                 return from !== to && pageSquircles.has(from) && pageSquircles.has(to);
             }
 
-            function showLoader(event?: Event) {
-                const mainPageTransition = getMainPageTransition(event);
-                if (mainPageTransition) {
-                    const navigation = event as Event & { from?: URL; direction?: string };
-                    const direction = `${mainPageTransition.shape}-${mainPageTransition.entering ? 'in' : 'out'}`;
-                    navigation.direction = direction;
-                    if (mainPageTransition.entering) {
-                        document.documentElement.classList.add('is-main-departing');
-                    } else {
-                        document.documentElement.classList.add('is-page-departing');
-                    }
-                    return;
-                }
+            function isLeavingKoops(event?: Event) {
+                const navigation = event as Event & { from?: URL; to?: URL };
+                if (!navigation.from || !navigation.to) return false;
 
-                if (isSectionChange(event)) {
-                    const navigation = event as Event & { direction?: string };
-                    navigation.direction = 'section-change';
-                    document.documentElement.classList.add('is-section-departing');
-                    document.querySelector<HTMLElement>('.page-squircle')
-                        ?.style.setProperty('view-transition-name', 'cinema-page-squircle');
-                    return;
+                const from = normalizeRoute(navigation.from.pathname);
+                const to = normalizeRoute(navigation.to.pathname);
+                return from === '/blog'
+                    && from !== to
+                    && document.documentElement.classList.contains('koops-blog-active');
+            }
+
+            function showLoader(event?: Event) {
+                const leavingKoops = isLeavingKoops(event);
+
+                if (!leavingKoops) {
+                    const mainPageTransition = getMainPageTransition(event);
+                    if (mainPageTransition) {
+                        const navigation = event as Event & { from?: URL; direction?: string };
+                        const direction = `${mainPageTransition.shape}-${mainPageTransition.entering ? 'in' : 'out'}`;
+                        navigation.direction = direction;
+                        if (mainPageTransition.entering) {
+                            document.documentElement.classList.add('is-main-departing');
+                        } else {
+                            document.documentElement.classList.add('is-page-departing');
+                        }
+                        return;
+                    }
+
+                    if (isSectionChange(event)) {
+                        const navigation = event as Event & { direction?: string };
+                        navigation.direction = 'section-change';
+                        document.documentElement.classList.add('is-section-departing');
+                        document.querySelector<HTMLElement>('.page-squircle')
+                            ?.style.setProperty('view-transition-name', 'cinema-page-squircle');
+                        return;
+                    }
                 }
 
                 loaderCycle += 1;
                 loaderShownAt = performance.now();
                 const loader = document.getElementById('site-loader');
                 if (!loader) return;
+
+                const loaderMark = loader.querySelector<HTMLElement>('.loader-mark');
+                loader.classList.toggle('is-koops-exit', leavingKoops);
+                if (loaderMark) loaderMark.textContent = leavingKoops ? 'Returning to Kersh' : 'k.a.';
 
                 loader.hidden = false;
                 loader.removeAttribute('aria-hidden');
