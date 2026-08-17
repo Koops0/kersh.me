@@ -31,12 +31,12 @@
             return;
         }
 
-        const startTime = Date.now();
+        const startTime = performance.now();
         const originalText = element.textContent || '';
         const maxLength = Math.max(originalText.length, targetText.length);
         
-        function update() {
-            const elapsed = Date.now() - startTime;
+        function update(frameTime: number = performance.now()) {
+            const elapsed = frameTime - startTime;
             const progress = Math.min(elapsed / duration, 1);
             
             let result = '';
@@ -150,7 +150,7 @@
 
             const headerBounds = headerEl.getBoundingClientRect();
             const textElements = Array.from(contentRoot.querySelectorAll<HTMLElement>(
-                'h1, h2, h3, h4, h5, h6, p, li, blockquote, pre'
+                '.mode-switch, h1, h2, h3, h4, h5, h6, p, li, blockquote, pre'
             ));
             const textBounds = textElements
                 .map((element) => element.getBoundingClientRect())
@@ -294,7 +294,10 @@
 .site-header:not(.home-page) {
     position: sticky;
     top: 0;
+    z-index: 100;
     isolation: isolate;
+    background-color: transparent;
+    transition: background-color 180ms ease;
 }
 
 .site-header:not(.home-page)::before {
@@ -310,6 +313,10 @@
 
 .site-header:not(.home-page).has-content-behind::before {
     opacity: 1;
+}
+
+.site-header:not(.home-page).has-content-behind {
+    background-color: var(--canvas);
 }
 
 .brand-control {

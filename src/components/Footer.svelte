@@ -1,8 +1,8 @@
 <script lang="ts">
     import { onMount } from 'svelte';
 
-    let previousSiteUrl = '#';
-    let nextSiteUrl = '#';
+    let previousSiteUrl = 'https://otu-ring.com/prev.html';
+    let nextSiteUrl = 'https://otu-ring.com/next.html';
 
     onMount(() => {
         const hostname = window.location.hostname.replace(/^www\./, '');
@@ -35,11 +35,9 @@
             href="https://otu-ring.com"
             target="_blank"
             rel="noopener noreferrer"
+            aria-label="OTU Webring"
         >
-            <img
-                src="https://otu-ring.com/assets/ontariotech.svg"
-                alt="OTU Webring"
-            />
+            <span class="webring-mark" aria-hidden="true"></span>
         </a>
 
         <a
@@ -113,15 +111,17 @@ p {
     border: none;
 }
 
-.webring-home img {
-    width: auto;
+.webring-mark {
+    display: block;
+    width: 20px;
     height: 20px;
+    background: center / contain no-repeat url('https://otu-ring.com/assets/ontariotech.svg');
     opacity: 0.7;
     transition: opacity 0.2s ease;
 }
 
-.webring-home:hover img,
-.webring-home:focus-visible img {
+.webring-home:hover .webring-mark,
+.webring-home:focus-visible .webring-mark {
     opacity: 1;
 }
 </style>

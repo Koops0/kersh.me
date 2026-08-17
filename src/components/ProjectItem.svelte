@@ -1,7 +1,7 @@
 <script lang="ts">
     export let name: string;
-    export let demo: string;
-    export let github: string;
+    export let demo: string | undefined = undefined;
+    export let github: string | undefined = undefined;
     export let description: string;
     export let years: string;
 </script>
@@ -11,20 +11,26 @@
         <div class="heading-row">
             <h3>{name}</h3>
 
-            <div class="project-links" aria-label={`${name} links`}>
-                <a
-                    href={demo}
-                    target="_blank"
-                    rel="noreferrer"
-                    aria-label={`${name} demo`}
-                >demo <span aria-hidden="true">↗</span></a>
-                <a
-                    href={github}
-                    target="_blank"
-                    rel="noreferrer"
-                    aria-label={`${name} on GitHub`}
-                >github <span aria-hidden="true">↗</span></a>
-            </div>
+            {#if demo || github}
+                <div class="project-links" aria-label={`${name} links`}>
+                    {#if demo}
+                        <a
+                            href={demo}
+                            target="_blank"
+                            rel="noreferrer"
+                            aria-label={`${name} demo`}
+                        >demo <span aria-hidden="true">↗</span></a>
+                    {/if}
+                    {#if github}
+                        <a
+                            href={github}
+                            target="_blank"
+                            rel="noreferrer"
+                            aria-label={`${name} on GitHub`}
+                        >github <span aria-hidden="true">↗</span></a>
+                    {/if}
+                </div>
+            {/if}
         </div>
 
         <p class="description">{description}</p>

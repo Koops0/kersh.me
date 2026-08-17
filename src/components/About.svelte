@@ -85,6 +85,7 @@
             clamp(1rem, 5vw, 4.5rem),
             env(safe-area-inset-right)
         );
+        padding-bottom: clamp(1.25rem, 3vw, 2.25rem);
     }
 
     .content {
@@ -114,6 +115,10 @@
         line-height: 1.6;
         margin: 0 0 1rem;
         overflow-wrap: anywhere;
+    }
+
+    p:last-child {
+        margin-bottom: 0;
     }
 
     @media (max-width: 520px) {

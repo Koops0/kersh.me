@@ -24,7 +24,7 @@
             <img
                 src={icon}
                 alt={iconAlt}
-                loading="lazy"
+                loading="eager"
                 decoding="async"
                 on:error={() => iconFailed = true}
             />

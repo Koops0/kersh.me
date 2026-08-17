@@ -246,7 +246,12 @@
         background: transparent;
         transition:
             color 460ms cubic-bezier(0.22, 1, 0.36, 1),
+            background-color 180ms ease,
             box-shadow 460ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    :global(html.blog-page-active .site-header.has-content-behind) {
+        background-color: var(--canvas);
     }
 
     :global(html.blog-page-active .site-header::after) {
@@ -258,7 +263,7 @@
         opacity: 0;
         border-bottom: 2px solid #143dff;
         background:
-            linear-gradient(180deg, rgb(13 35 91 / 96%), rgb(3 10 42 / 94%)),
+            linear-gradient(180deg, #0d235b, #030a2a),
             #050f2a;
         box-shadow:
             inset 0 -1px 0 #0aa7ff,
@@ -271,13 +276,13 @@
         font-family: 'KH Menu', var(--font-body);
     }
 
-    :global(html.koops-blog-active .site-header::after) {
+    :global(html.koops-blog-active .site-header.has-content-behind::after) {
         opacity: 1;
     }
 
     :global(html.koops-blog-active .site-header::before) {
         background:
-            linear-gradient(180deg, rgb(13 35 91 / 98%), rgb(3 10 42 / 98%)),
+            linear-gradient(180deg, #0d235b, #030a2a),
             #050f2a;
     }
 

@@ -367,6 +367,7 @@ html {
     scroll-behavior: auto;
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
+    background-color: var(--canvas);
 }
 
 *,
@@ -818,6 +819,7 @@ html.is-page-arriving.is-page-revealing .site-footer {
 
 html.is-main-departing .full-name,
 html.is-main-departing .profession,
+html.is-main-departing .mobile-hint,
 html.is-main-departing .sections,
 html.is-main-departing .site-footer {
     opacity: 0;
@@ -866,15 +868,26 @@ html.is-section-arriving .site-header::before {
     transition: none !important;
 }
 
+html.is-main-departing .site-header,
+html.is-page-departing .site-header,
+html.is-main-arriving .site-header,
+html.is-page-arriving .site-header,
+html.is-section-departing .site-header,
+html.is-section-arriving .site-header {
+    background-color: transparent !important;
+}
+
 html.is-main-arriving .full-name,
 html.is-main-arriving .profession,
+html.is-main-arriving .mobile-hint,
 html.is-main-arriving .sections,
 html.is-main-arriving .site-footer {
     opacity: 0;
 }
 
 html.is-main-arriving.is-main-revealing .full-name,
-html.is-main-arriving.is-main-revealing .profession {
+html.is-main-arriving.is-main-revealing .profession,
+html.is-main-arriving.is-main-revealing .mobile-hint {
     opacity: 1;
 }
 

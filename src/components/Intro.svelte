@@ -8,17 +8,17 @@
     const professionText = 'Software Engineer. Destructor. Builder.';
     
     function scrambleText(element: HTMLElement, targetText: string, duration: number = 1500) {
-        const startTime = Date.now();
+        const startTime = performance.now();
         const originalText = element.textContent || '';
         const maxLength = Math.max(originalText.length, targetText.length);
         
-        function update() {
+        function update(frameTime: number = performance.now()) {
             if (window.matchMedia('(max-width: 820px)').matches) {
                 element.textContent = targetText;
                 return;
             }
 
-            const elapsed = Date.now() - startTime;
+            const elapsed = frameTime - startTime;
             const progress = Math.min(elapsed / duration, 1);
             
             let result = '';
@@ -94,6 +94,7 @@
     <div class="info-section">
         <div class="profession-row">
             <p class="profession" bind:this={professionEl}>{professionText}</p>
+            <p class="mobile-hint">click on k.a. for a little surprise!</p>
             <nav class="sections">
                 <a href="/about">About</a>
                 <span class="separator">|</span>
@@ -173,6 +174,16 @@
         text-align: center;
         min-width: 14ch;
     }
+
+    .mobile-hint {
+        display: none;
+        margin: 0;
+        color: var(--muted-ink);
+        font-size: 0.8rem;
+        font-weight: 500;
+        line-height: 1.4;
+        text-align: center;
+    }
     
     .sections {
         display: flex;
@@ -227,6 +238,10 @@
 
         .sections {
             display: none;
+        }
+
+        .mobile-hint {
+            display: block;
         }
     }
 

@@ -14,8 +14,8 @@
 
     type Project = {
         name: string;
-        demo: string;
-        github: string;
+        demo?: string;
+        github?: string;
         description: string;
         years: string;
     };
@@ -53,7 +53,7 @@
             iconAlt: 'Ontario Tech Robotics Logo',
             position: 'Programming Lead and Mentor',
             company: 'Ontario Tech Robotics',
-            description: 'robot in 3 days, arc competition and design team website',
+            description: 'programming lead and mentor for robot in 3 days, arc competition and website',
             years: '2023-2026',
             website: 'https://www.ot-robotics.com'
         }
@@ -63,16 +63,41 @@
         {
          name: 'MechaMind',
         demo: 'https://example.com',
-        github: 'https://github.com/Koops0/example',
         description: 'honours thesis project, mixed reality application to learn robotics programming',
         years: '2025-2026'
         },
         {
-         name: 'Project name',
-        demo: 'https://example.com',
-        github: 'https://github.com/Koops0/example',
-        description: 'What the project does and how it was built',
-        years: '2025 - 2026'
+         name: 'Theseus - Ri3D',
+        demo: 'https://www.youtube.com/watch?v=ccGA3FD2jmI',
+        github: 'https://github.com/otri3d/Rebuilt2026',
+        description: 'ri3d robot code for 2026 frc game "rebuilt"',
+        years: '2026'
+        },
+        {
+        name: 'PhotoWASH',
+        github: 'https://github.com/Koops0/PhotoWASH',
+        description: 'diffusion-based image restoration for consumer photo editing',
+        years: '2024'
+        },
+        {
+         name: 'Kraken - Ri3D',
+        demo: 'https://www.youtube.com/watch?v=_QJr6YzZbPE',
+        github: 'https://github.com/otri3d/Reefscape2025',
+        description: 'ri3d robot code for 2025 frc game "reefscape"',
+        years: '2025'
+        },
+        {
+         name: 'CinemaShots',
+        github: 'https://github.com/Koops0/cinemashots',
+        description: 'neural filter style transfer for computational photography',
+        years: '2024'
+        },
+        {
+         name: 'Ri3D 2024',
+        demo: 'https://www.youtube.com/watch?v=NvgQkyxj2QI',
+        github: 'https://github.com/otri3d/Crescendo2024',
+        description: 'ri3d robot code for 2024 frc game "crescendo". no robot reveal this year',
+        years: '2024'
         },
         {
          name: 'Project name',
