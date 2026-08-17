@@ -61,11 +61,11 @@
 
     const projects: Project[] = [
         {
-         name: 'Project name',
+         name: 'MechaMind',
         demo: 'https://example.com',
         github: 'https://github.com/Koops0/example',
-        description: 'What the project does and how it was built',
-        years: '2025 - 2026'
+        description: 'honours thesis project, mixed reality application to learn robotics programming',
+        years: '2025-2026'
         },
         {
          name: 'Project name',

@@ -207,8 +207,8 @@
         --accent: #8bc2ff;
         --canvas: #030817;
         --backdrop:
-            radial-gradient(circle at 74% 24%, rgb(56 116 202 / 26%), transparent 31rem),
-            radial-gradient(circle at 18% 82%, rgb(68 44 145 / 25%), transparent 28rem),
+            radial-gradient(circle 31rem at 74% 24%, rgb(86 196 255 / 30%) 0%, rgb(28 76 218 / 20%) 34%, transparent 68%),
+            radial-gradient(circle 26rem at 18% 82%, rgb(151 200 67 / 21%) 0%, rgb(241 125 30 / 15%) 36%, transparent 68%),
             linear-gradient(145deg, #040818, #09132e 52%, #020511);
         --icon-hover: rgb(116 174 255 / 16%);
     }
@@ -531,8 +531,8 @@
         pointer-events: none;
         opacity: 0;
         background:
-            radial-gradient(circle at 74% 24%, rgb(56 116 202 / 34%), transparent 27rem),
-            radial-gradient(circle at 18% 82%, rgb(68 44 145 / 32%), transparent 25rem),
+            radial-gradient(circle 27rem at 74% 24%, rgb(86 196 255 / 36%) 0%, rgb(28 76 218 / 22%) 34%, transparent 68%),
+            radial-gradient(circle 24rem at 18% 82%, rgb(151 200 67 / 24%) 0%, rgb(241 125 30 / 17%) 36%, transparent 68%),
             linear-gradient(145deg, rgb(4 8 24 / 96%), rgb(9 19 46 / 97%) 52%, rgb(2 5 17 / 98%));
         transition: opacity 260ms ease;
     }
