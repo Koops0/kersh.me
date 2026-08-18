@@ -62,7 +62,7 @@
     const projects: Project[] = [
         {
          name: 'MechaMind',
-        demo: 'https://example.com',
+        demo: 'https://drive.google.com/file/d/1MPKN1U8PoMfBoGCGY-129b-aeOEo0Ppj',
         description: 'honours thesis project, mixed reality application to learn robotics programming',
         years: '2025-2026'
         },
