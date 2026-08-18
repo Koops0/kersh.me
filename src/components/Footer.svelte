@@ -23,7 +23,7 @@
             style="display: flex; align-items: center; border: none;"
         >
             <img
-                src="https://otu-ring.com/assets/ontariotech.svg"
+                src="/images/ontariotech.svg"
                 alt="OTU Webring"
                 style="height: 20px; width: auto; opacity: 0.7; transition: opacity 0.2s ease;"
             />

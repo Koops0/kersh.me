@@ -7,6 +7,9 @@
 /images/*
   Cache-Control: public, max-age=2592000
 
+/images/ontariotech.svg
+  Cache-Control: public, max-age=31556952, immutable
+
 /favicon.png
   Cache-Control: public, max-age=31556952, immutable
 

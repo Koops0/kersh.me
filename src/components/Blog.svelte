@@ -35,9 +35,30 @@
         koops: modes.koops.topics[0]
     };
 
+    function syncThemeColor(nextMode: BlogMode) {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+        document.querySelectorAll<HTMLMetaElement>('meta[name="theme-color"]').forEach((meta) => {
+            if (nextMode === 'koops') {
+                meta.content = '#030817';
+                return;
+            }
+
+            const media = meta.media;
+            if (media.includes('light')) {
+                meta.content = '#f4f1ea';
+            } else if (media.includes('dark')) {
+                meta.content = '#050709';
+            } else {
+                meta.content = prefersDark ? '#050709' : '#f4f1ea';
+            }
+        });
+    }
+
     function applyMode(nextMode: BlogMode) {
         mode = nextMode;
         document.documentElement.classList.toggle('koops-blog-active', nextMode === 'koops');
+        syncThemeColor(nextMode);
     }
 
     function selectMode(nextMode: BlogMode) {
@@ -101,6 +122,7 @@
     onMount(() => {
         document.documentElement.classList.add('blog-page-active');
         document.documentElement.classList.remove('koops-blog-active');
+        syncThemeColor('kersh');
         window.addEventListener('click', interceptKoopsNavigation, { capture: true });
 
         return () => {
@@ -109,6 +131,7 @@
             if (pendingNavigationTimer !== undefined) window.clearTimeout(pendingNavigationTimer);
             window.removeEventListener('click', interceptKoopsNavigation, { capture: true });
             document.documentElement.classList.remove('blog-page-active', 'koops-blog-active');
+            syncThemeColor('kersh');
         };
     });
 </script>
@@ -535,7 +558,7 @@
 
     .blog-container::before {
         content: '';
-        position: absolute;
+        position: fixed;
         inset: 0;
         z-index: -1;
         pointer-events: none;
