@@ -26,8 +26,8 @@
             iconAlt: 'MDA Logo',
             position: 'Software Engineer Intern',
             company: 'MDA Space',
-            description: 'canadarm2 ground and canadarm3 flight software development',
-            years: '2025-2026',
+            description: 'canadarm2 ground and canadarm3 embedded flight software development',
+            years: '2025-2027',
             website: 'https://mda.space/'
         },
         {
@@ -70,20 +70,20 @@
          name: 'Theseus - Ri3D',
         demo: 'https://www.youtube.com/watch?v=ccGA3FD2jmI',
         github: 'https://github.com/otri3d/Rebuilt2026',
-        description: 'ri3d robot code for 2026 frc game "rebuilt"',
+        description: 'prototype frc robot code for 2026 game "rebuilt"',
         years: '2026'
         },
         {
         name: 'PhotoWASH',
         github: 'https://github.com/Koops0/PhotoWASH',
         description: 'diffusion-based image restoration for consumer photo editing',
-        years: '2024'
+        years: '2025'
         },
         {
          name: 'Kraken - Ri3D',
         demo: 'https://www.youtube.com/watch?v=_QJr6YzZbPE',
         github: 'https://github.com/otri3d/Reefscape2025',
-        description: 'ri3d robot code for 2025 frc game "reefscape"',
+        description: 'prototype frc robot code for 2025 game "reefscape"',
         years: '2025'
         },
         {
@@ -93,95 +93,38 @@
         years: '2024'
         },
         {
-         name: 'Ri3D 2024',
-        demo: 'https://www.youtube.com/watch?v=NvgQkyxj2QI',
-        github: 'https://github.com/otri3d/Crescendo2024',
-        description: 'ri3d robot code for 2024 frc game "crescendo". no robot reveal this year',
+         name: 'BlueBrick',
+        github: 'https://github.com/Koops0/llama',
+        description: 'brickit but for engineers with vision language models',
         years: '2024'
         },
         {
-         name: 'Project name',
-        demo: 'https://example.com',
-        github: 'https://github.com/Koops0/example',
-        description: 'What the project does and how it was built',
+         name: 'TrashTalk',
+        demo: 'https://devpost.com/software/trashtalk-c3wix9',
+        github: 'https://github.com/Koops0/TrashTalk',
+        description: 'a trash can that talks shit or complements you depending on your skill',
+        years: '2024'
+        },
+        {
+         name: 'TekkenAI',
+        demo: 'https://github.com/Koops0/TekkenAIPublic',
+        github: 'https://github.com/Koops0/TekkenAI',
+        description: 'reinforcement learning x tekken 8, a match made in yakushima',
         years: '2025 - 2026'
         },
         {
-         name: 'Project name',
-        demo: 'https://example.com',
-        github: 'https://github.com/Koops0/example',
-        description: 'What the project does and how it was built',
-        years: '2025 - 2026'
+         name: 'Ri3D 2024',
+        demo: 'https://www.youtube.com/watch?v=NvgQkyxj2QI',
+        github: 'https://github.com/otri3d/Crescendo2024',
+        description: 'prototype frc robot code for 2024 game "crescendo". no robot reveal this year',
+        years: '2024'
         },
         {
-         name: 'Project name',
-        demo: 'https://example.com',
-        github: 'https://github.com/Koops0/example',
-        description: 'What the project does and how it was built',
-        years: '2025 - 2026'
-        },
-        {
-         name: 'Project name',
-        demo: 'https://example.com',
-        github: 'https://github.com/Koops0/example',
-        description: 'What the project does and how it was built',
-        years: '2025 - 2026'
-        },
-        {
-         name: 'Project name',
-        demo: 'https://example.com',
-        github: 'https://github.com/Koops0/example',
-        description: 'What the project does and how it was built',
-        years: '2025 - 2026'
-        },
-        {
-         name: 'Project name',
-        demo: 'https://example.com',
-        github: 'https://github.com/Koops0/example',
-        description: 'What the project does and how it was built',
-        years: '2025 - 2026'
-        },
-        {
-         name: 'Project name',
-        demo: 'https://example.com',
-        github: 'https://github.com/Koops0/example',
-        description: 'What the project does and how it was built',
-        years: '2025 - 2026'
-        },
-        {
-         name: 'Project name',
-        demo: 'https://example.com',
-        github: 'https://github.com/Koops0/example',
-        description: 'What the project does and how it was built',
-        years: '2025 - 2026'
-        },
-        {
-         name: 'Project name',
-        demo: 'https://example.com',
-        github: 'https://github.com/Koops0/example',
-        description: 'What the project does and how it was built',
-        years: '2025 - 2026'
-        },
-        {
-         name: 'Project name',
-        demo: 'https://example.com',
-        github: 'https://github.com/Koops0/example',
-        description: 'What the project does and how it was built',
-        years: '2025 - 2026'
-        },
-        {
-         name: 'Project name',
-        demo: 'https://example.com',
-        github: 'https://github.com/Koops0/example',
-        description: 'What the project does and how it was built',
-        years: '2025 - 2026'
-        },
-        {
-         name: 'Project name',
-        demo: 'https://example.com',
-        github: 'https://github.com/Koops0/example',
-        description: 'What the project does and how it was built',
-        years: '2025 - 2026'
+         name: 'Aero Copilot',
+        demo: 'https://www.spaceappschallenge.org/2023/find-a-team/intergalactic-pirates/?tab=project',
+        github: 'https://github.com/Koops0/Aero-Copilot',
+        description: 'simplifying technical documents for aerospace engineers with llms, when it was niche',
+        years: '2023'
         }
     ];
 </script>
