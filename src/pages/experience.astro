@@ -35,6 +35,12 @@ import Experience from '../components/Experience.svelte';
     animation: float 25s ease-in-out infinite;
 }
 
+@media (min-width: 1800px) {
+    .experience-blob {
+        width: min(84vw, 120vh);
+    }
+}
+
 @media (max-width: 520px) {
     .experience-blob {
         width: min(78vw, 28rem);

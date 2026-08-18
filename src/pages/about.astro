@@ -37,6 +37,12 @@ import About from '../components/About.svelte';
     animation: float 25s ease-in-out infinite;
 }
 
+@media (min-width: 1800px) {
+    .about-blob {
+        width: min(84vw, 120vh);
+    }
+}
+
 @media (max-width: 520px) {
     .about-blob {
         width: min(78vw, 28rem);

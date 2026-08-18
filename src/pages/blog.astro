@@ -35,6 +35,12 @@ import Blog from '../components/Blog.svelte';
     animation: float 25s ease-in-out infinite;
 }
 
+@media (min-width: 1800px) {
+    .blog-blob {
+        width: min(84vw, 120vh);
+    }
+}
+
 @media (max-width: 520px) {
     .blog-blob {
         width: min(78vw, 28rem);
