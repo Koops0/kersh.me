@@ -229,11 +229,27 @@
             min-height: calc(100vh - 6rem);
             min-height: calc(100svh - 6rem);
             padding-block: clamp(2.5rem, 7vh, 5rem);
+            align-items: center;
+        }
+
+        .name-container {
+            display: flex;
+            justify-content: center;
         }
 
         .full-name {
-            font-size: 3rem;
+            width: fit-content;
+            font-size: clamp(1.9rem, 9.25vw, 2.5rem);
             line-height: 0.92;
+            text-align: center;
+        }
+
+        .info-section {
+            align-items: center;
+        }
+
+        .profession-row {
+            max-width: 100%;
         }
 
         .sections {
@@ -264,30 +280,6 @@
 
         .sections a {
             font-size: 1rem;
-        }
-    }
-
-    @media (max-width: 480px) {
-        .full-name {
-            font-size: 2.5rem;
-        }
-    }
-
-    @media (max-width: 380px) {
-        .full-name {
-            font-size: 2.15rem;
-        }
-    }
-
-    @media (max-width: 340px) {
-        .full-name {
-            font-size: 1.9rem;
-        }
-    }
-
-    @media (max-width: 300px) {
-        .full-name {
-            font-size: 1.7rem;
         }
     }
 
