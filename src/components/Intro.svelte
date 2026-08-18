@@ -93,7 +93,7 @@
     
     <div class="info-section">
         <div class="profession-row">
-            <p class="profession" bind:this={professionEl}>{professionText}</p>
+            <p class="profession" bind:this={professionEl}><span class="profession-line">Software Engineer.</span>{' '}<span class="profession-line">Destructor. Builder.</span></p>
             <p class="mobile-hint">click on k.a. for a little surprise!</p>
             <nav class="sections">
                 <a href="/about">About</a>
@@ -239,9 +239,9 @@
 
         .full-name {
             width: fit-content;
-            font-size: clamp(1.9rem, 9.25vw, 2.5rem);
+            font-size: clamp(1.65rem, 8.35vw, 2.35rem);
             line-height: 0.92;
-            text-align: center;
+            text-align: left;
         }
 
         .info-section {
@@ -249,7 +249,14 @@
         }
 
         .profession-row {
+            width: 100%;
             max-width: 100%;
+        }
+
+        .profession {
+            min-width: 0;
+            font-size: min(1rem, 3.65vw);
+            white-space: nowrap;
         }
 
         .sections {

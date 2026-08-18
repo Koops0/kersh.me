@@ -131,11 +131,19 @@
 
     onMount(() => {
         const mobileQuery = window.matchMedia('(max-width: 820px)');
+        let surfaceObserver: IntersectionObserver | undefined;
+        let headerResizeObserver: ResizeObserver | undefined;
+        const textBehindHeader = new Set<Element>();
+
         const resetMobileBrandForNavigation = () => {
             if (mobileQuery.matches) resetBrandImmediately();
         };
-        const syncHeaderSurface = () => {
+
+        const observeHeaderCollisions = () => {
             surfaceFrame = null;
+            surfaceObserver?.disconnect();
+            surfaceObserver = undefined;
+            textBehindHeader.clear();
 
             if (currentPage === 'home' || !headerEl) {
                 hasContentBehind = false;
@@ -148,27 +156,38 @@
                 return;
             }
 
-            const headerBounds = headerEl.getBoundingClientRect();
             const textElements = Array.from(contentRoot.querySelectorAll<HTMLElement>(
                 '.mode-switch, h1, h2, h3, h4, h5, h6, p, li, blockquote, pre'
             ));
-            const textBounds = textElements
-                .map((element) => element.getBoundingClientRect())
-                .filter((bounds) => bounds.width > 0 && bounds.height > 0);
-
-            if (textBounds.length === 0) {
+            if (textElements.length === 0) {
                 hasContentBehind = false;
                 return;
             }
 
-            const firstTextTop = Math.min(...textBounds.map((bounds) => bounds.top));
-            const lastTextBottom = Math.max(...textBounds.map((bounds) => bounds.bottom));
-            hasContentBehind = firstTextTop <= headerBounds.bottom
-                && lastTextBottom >= headerBounds.top;
+            const headerHeight = Math.ceil(headerEl.getBoundingClientRect().height);
+            const bottomInset = Math.max(0, window.innerHeight - headerHeight);
+
+            surfaceObserver = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        textBehindHeader.add(entry.target);
+                    } else {
+                        textBehindHeader.delete(entry.target);
+                    }
+                });
+                hasContentBehind = textBehindHeader.size > 0;
+            }, {
+                root: null,
+                rootMargin: `0px 0px -${bottomInset}px 0px`,
+                threshold: 0
+            });
+
+            textElements.forEach((element) => surfaceObserver?.observe(element));
         };
+
         const queueHeaderSurfaceSync = () => {
             if (surfaceFrame === null) {
-                surfaceFrame = requestAnimationFrame(syncHeaderSurface);
+                surfaceFrame = requestAnimationFrame(observeHeaderCollisions);
             }
         };
         const syncViewport = () => {
@@ -188,16 +207,20 @@
 
         syncViewport();
         mobileQuery.addEventListener('change', syncViewport);
-        window.addEventListener('scroll', queueHeaderSurfaceSync, { passive: true });
         window.addEventListener('resize', queueHeaderSurfaceSync);
         document.addEventListener('astro:before-preparation', resetMobileBrandForNavigation);
         document.fonts?.ready.then(queueHeaderSurfaceSync);
+        if (headerEl && 'ResizeObserver' in window) {
+            headerResizeObserver = new ResizeObserver(queueHeaderSurfaceSync);
+            headerResizeObserver.observe(headerEl);
+        }
 
         return () => {
             mobileQuery.removeEventListener('change', syncViewport);
-            window.removeEventListener('scroll', queueHeaderSurfaceSync);
             window.removeEventListener('resize', queueHeaderSurfaceSync);
             document.removeEventListener('astro:before-preparation', resetMobileBrandForNavigation);
+            surfaceObserver?.disconnect();
+            headerResizeObserver?.disconnect();
             if (scrambleFrame !== null) cancelAnimationFrame(scrambleFrame);
             if (surfaceFrame !== null) cancelAnimationFrame(surfaceFrame);
         };

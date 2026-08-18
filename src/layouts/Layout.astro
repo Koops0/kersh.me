@@ -1,5 +1,6 @@
 ---
 import { ClientRouter } from 'astro:transitions';
+import Font from 'astro/components/Font.astro';
 ---
 
 <!doctype html>
@@ -9,13 +10,13 @@ import { ClientRouter } from 'astro:transitions';
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
         <meta name="theme-color" content="#f4f1ea" media="(prefers-color-scheme: light)" />
         <meta name="theme-color" content="#050709" media="(prefers-color-scheme: dark)" />
+        <meta name="description" content="Kershan Arulneswaran is a software engineer building embedded systems, robotics, computer vision, and ambitious software." />
         <link rel="icon" type="image/png" href="/favicon.png?v=1" />
         <meta name="generator" content={Astro.generator} />
         <title>Kershan Arulneswaran</title>
         <ClientRouter />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Red+Hat+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+        <Font cssVariable="--font-archivo" preload />
+        <Font cssVariable="--font-red-hat-mono" preload />
     </head>
     <body>
         <div id="site-loader" class="site-loader" role="status" aria-label="Loading site">
@@ -26,7 +27,7 @@ import { ClientRouter } from 'astro:transitions';
         <slot />
 
         <script>
-            const minimumLoaderTime = 360;
+            const minimumLoaderTime = 180;
             let loaderShownAt = performance.now();
             let loaderCycle = 0;
 
@@ -115,9 +116,8 @@ import { ClientRouter } from 'astro:transitions';
                 requestAnimationFrame(() => loader.classList.remove('is-hidden'));
             }
 
-            async function hideLoader() {
+            function hideLoader() {
                 const cycle = loaderCycle;
-                await document.fonts?.ready;
 
                 const elapsed = performance.now() - loaderShownAt;
                 const remaining = Math.max(0, minimumLoaderTime - elapsed);
@@ -139,10 +139,10 @@ import { ClientRouter } from 'astro:transitions';
             document.addEventListener('astro:before-preparation', showLoader);
             document.addEventListener('astro:page-load', hideLoader);
 
-            if (document.readyState === 'complete') {
-                void hideLoader();
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', hideLoader, { once: true });
             } else {
-                window.addEventListener('load', () => void hideLoader(), { once: true });
+                hideLoader();
             }
 
             if (import.meta.env.PROD && 'serviceWorker' in navigator) {
@@ -334,8 +334,8 @@ import { ClientRouter } from 'astro:transitions';
 <style is:global>
 :root {
     color-scheme: light dark;
-    --font-display: 'Archivo', 'Arial Black', sans-serif;
-    --font-body: 'Red Hat Mono', ui-monospace, 'SFMono-Regular', Consolas, monospace;
+    --font-display: var(--font-archivo), 'Arial Black', sans-serif;
+    --font-body: var(--font-red-hat-mono), ui-monospace, 'SFMono-Regular', Consolas, monospace;
     --ink: #172126;
     --muted-ink: rgb(23 33 38 / 68%);
     --accent: #006b7c;
@@ -1036,21 +1036,6 @@ section > *:not(.bg-shape) {
     }
     50% {
         transform: scale(1.1) rotate(10deg);
-    }
-}
-
-@keyframes morph {
-    0%, 100% {
-        border-radius: 63% 37% 54% 46% / 55% 48% 52% 45%;
-    }
-    25% {
-        border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
-    }
-    50% {
-        border-radius: 54% 46% 38% 62% / 49% 70% 30% 51%;
-    }
-    75% {
-        border-radius: 70% 30% 50% 50% / 30% 65% 35% 70%;
     }
 }
 

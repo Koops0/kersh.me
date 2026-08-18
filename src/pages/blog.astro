@@ -15,7 +15,7 @@ import Blog from '../components/Blog.svelte';
         </section>
     </main>
 
-    <Footer client:load />
+    <Footer />
 </Layout>
 
 <style>
@@ -32,7 +32,7 @@ import Blog from '../components/Blog.svelte';
     left: 50%;
     translate: -50% -50%;
     border-radius: 45% 55% 60% 40% / 50% 35% 65% 50%;
-    animation: float 25s ease-in-out infinite, morph 18s ease-in-out infinite;
+    animation: float 25s ease-in-out infinite;
 }
 
 @media (max-width: 520px) {

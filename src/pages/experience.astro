@@ -11,11 +11,11 @@ import Experience from '../components/Experience.svelte';
     <main>
         <section class="section experience-section">
             <div class="bg-shape bondi-blue page-squircle experience-blob" data-squircle="bondi" transition:name="cinema-bondi"></div>
-            <Experience client:load />
+            <Experience />
         </section>
     </main>
 
-    <Footer client:load />
+    <Footer />
 </Layout>
 
 <style>
@@ -32,7 +32,7 @@ import Experience from '../components/Experience.svelte';
     left: 50%;
     translate: -50% -50%;
     border-radius: 45% 55% 60% 40% / 50% 35% 65% 50%;
-    animation: float 25s ease-in-out infinite, morph 18s ease-in-out infinite;
+    animation: float 25s ease-in-out infinite;
 }
 
 @media (max-width: 520px) {

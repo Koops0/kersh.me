@@ -1,18 +1,3 @@
-<script lang="ts">
-    import { onMount } from 'svelte';
-
-    let previousSiteUrl = 'https://otu-ring.com/prev.html';
-    let nextSiteUrl = 'https://otu-ring.com/next.html';
-
-    onMount(() => {
-        const hostname = window.location.hostname.replace(/^www\./, '');
-        const encodedHostname = encodeURIComponent(hostname);
-
-        previousSiteUrl = `https://otu-ring.com/prev.html?from=${encodedHostname}`;
-        nextSiteUrl = `https://otu-ring.com/next.html?from=${encodedHostname}`;
-    });
-</script>
-
 <footer class="site-footer">
     <small>
         &copy; 2026 kershan arulneswaran. all rights reserved.
@@ -23,7 +8,7 @@
         <a
             id="webring-prev"
             class="webring-navigation"
-            href={previousSiteUrl}
+            href="https://otu-ring.com/prev.html?from=kersharul.com"
             title="Previous site"
             aria-label="Previous site in the OTU Webring"
         >
@@ -35,15 +20,19 @@
             href="https://otu-ring.com"
             target="_blank"
             rel="noopener noreferrer"
-            aria-label="OTU Webring"
+            style="display: flex; align-items: center; border: none;"
         >
-            <span class="webring-mark" aria-hidden="true"></span>
+            <img
+                src="https://otu-ring.com/assets/ontariotech.svg"
+                alt="OTU Webring"
+                style="height: 20px; width: auto; opacity: 0.7; transition: opacity 0.2s ease;"
+            />
         </a>
 
         <a
             id="webring-next"
             class="webring-navigation"
-            href={nextSiteUrl}
+            href="https://otu-ring.com/next.html?from=kersharul.com"
             title="Next site"
             aria-label="Next site in the OTU Webring"
         >
@@ -80,15 +69,18 @@ p {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 16px;
-    margin-top: 1rem;
+    gap: 0.75rem;
+    margin-top: 0.65rem;
+    line-height: 1;
 }
 
 .webring-navigation {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0.5rem;
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
     border: none;
     border-radius: 4px;
     color: #71717a;
@@ -99,29 +91,22 @@ p {
     transition: all 0.2s ease;
 }
 
+.webring-home {
+    width: 2rem;
+    height: 2rem;
+    justify-content: center;
+    line-height: 0;
+}
+
+.webring-home img {
+    display: block;
+    flex: none;
+}
+
 .webring-navigation:hover,
 .webring-navigation:focus-visible {
     color: #fafafa;
     background-color: rgba(255, 255, 255, 0.1);
 }
 
-.webring-home {
-    display: flex;
-    align-items: center;
-    border: none;
-}
-
-.webring-mark {
-    display: block;
-    width: 20px;
-    height: 20px;
-    background: center / contain no-repeat url('https://otu-ring.com/assets/ontariotech.svg');
-    opacity: 0.7;
-    transition: opacity 0.2s ease;
-}
-
-.webring-home:hover .webring-mark,
-.webring-home:focus-visible .webring-mark {
-    opacity: 1;
-}
 </style>

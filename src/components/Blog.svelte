@@ -43,6 +43,13 @@
     function selectMode(nextMode: BlogMode) {
         if (nextMode === mode || transitioning) return;
 
+        if (nextMode === 'koops') {
+            void Promise.all([
+                document.fonts?.load('1rem "KH Menu"'),
+                document.fonts?.load('1rem "KH Gummi"')
+            ]);
+        }
+
         if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
             applyMode(nextMode);
             return;
@@ -94,8 +101,6 @@
     onMount(() => {
         document.documentElement.classList.add('blog-page-active');
         document.documentElement.classList.remove('koops-blog-active');
-        void document.fonts?.load('1rem "KH Menu"');
-        void document.fonts?.load('1rem "KH Gummi"');
         window.addEventListener('click', interceptKoopsNavigation, { capture: true });
 
         return () => {
