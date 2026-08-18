@@ -9,13 +9,13 @@
             number: '01',
             title: 'Kersh',
             description: 'The composed side: general tech, job events, coffee chats, side projects, and the hobbies keeping me curious.',
-            topics: ['tech', 'work + events', 'coffee chats', 'side projects', 'hobbies']
+            topics: ['all', 'tech', 'work + events', 'coffee chats', 'side projects', 'hobbies']
         },
         koops: {
             number: '02',
             title: 'Koops',
             description: 'The slightly more unhinged side: hobby rabbit holes, strong opinions, rants, reviews, and whatever else refuses to fit neatly.',
-            topics: ['rants', 'reviews', 'deep dives', 'hobby lore', 'miscellany']
+            topics: ['all', 'rants', 'reviews', 'deep dives', 'hobby lore', 'miscellany']
         }
     } satisfies Record<BlogMode, {
         number: string;
@@ -23,6 +23,41 @@
         description: string;
         topics: string[];
     }>;
+
+    const entries = {
+        kersh: [{
+            title: 'This Was Supposed to Be a Normal Software Internship',
+            description: 'Instead, I got space robotics, embedded software, radiation testing, broken hardware, a couple of genuinely awful months, and a much clearer idea of the engineer I want to become.',
+            href: '/blog/kersh/mda',
+            label: '',
+            topics: ['tech', 'work + events']
+        },{
+            title: 'The Kersh post template',
+            description: 'A clear, editorial structure for technical notes, project stories, events, and everything in between.',
+            href: '/blog/kersh/template',
+            label: 'template preview',
+            topics: ['tech', 'side projects']
+        }],
+        koops: [{
+            title: 'So, Square Enix Showed More Kingdom Hearts 4.',
+            description: 'This was a massive mistake.',
+            href: '/blog/koops/kh4',
+            label: '',
+            topics: ['deep dives']
+        },{
+            title: 'The Koops post template',
+            description: 'A louder field-note format for rabbit holes, reviews, rants, and deeply unnecessary investigations.',
+            href: '/blog/koops/template',
+            label: 'load preview',
+            topics: ['deep dives', 'miscellany']
+        }]
+    } satisfies Record<BlogMode, Array<{
+        title: string;
+        description: string;
+        href: string;
+        label: string;
+        topics: readonly string[];
+    }>>;
 
     let mode: BlogMode = 'kersh';
     let transitionTarget: BlogMode = 'kersh';
@@ -89,6 +124,11 @@
         selectedTags = { ...selectedTags, [mode]: tag };
     }
 
+    function visibleEntries(selectedMode: BlogMode) {
+        if (selectedTags[selectedMode] === 'all') return entries[selectedMode];
+        return entries[selectedMode].filter((entry) => entry.topics.includes(selectedTags[selectedMode]));
+    }
+
     function interceptKoopsNavigation(event: MouseEvent) {
         if (mode !== 'koops' || transitioning || event.defaultPrevented) return;
         if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
@@ -121,8 +161,15 @@
 
     onMount(() => {
         document.documentElement.classList.add('blog-page-active');
-        document.documentElement.classList.remove('koops-blog-active');
-        syncThemeColor('kersh');
+        const searchParams = new URLSearchParams(window.location.search);
+        const requestedMode: BlogMode = searchParams.get('mode') === 'koops' ? 'koops' : 'kersh';
+        const requestedTag = searchParams.get('tag');
+
+        if (requestedTag && modes[requestedMode].topics.includes(requestedTag)) {
+            selectedTags = { ...selectedTags, [requestedMode]: requestedTag };
+        }
+
+        applyMode(requestedMode);
         window.addEventListener('click', interceptKoopsNavigation, { capture: true });
 
         return () => {
@@ -172,7 +219,7 @@
                 <h1>{modes[mode].title}</h1>
                 <p class="mode-description">{modes[mode].description}</p>
 
-                <ul class="topic-list" aria-label={`${modes[mode].title} topics`}>
+                <ul class="topic-list" aria-label={`Filter ${modes[mode].title} posts by tag`}>
                     {#each modes[mode].topics as topic}
                         <li class:selected={selectedTags[mode] === topic}>
                             <button
@@ -190,7 +237,26 @@
                 <div class="entries-heading">
                     <span class="header-collision-text">entries</span>
                     <span class="entries-rule" aria-hidden="true"></span>
-                    <span class="header-collision-text">00</span>
+                    <span class="header-collision-text">{visibleEntries(mode).length.toString().padStart(2, '0')}</span>
+                </div>
+
+                <div class="entries-list">
+                    {#if visibleEntries(mode).length > 0}
+                        {#each visibleEntries(mode) as entry}
+                            <a class="entry-card" href={entry.href}>
+                                <span class="entry-label header-collision-text">{entry.label}</span>
+                                <span class="entry-copy">
+                                    <strong class="header-collision-text">{entry.title}</strong>
+                                    <span class="header-collision-text">{entry.description}</span>
+                                </span>
+                                <span class="entry-arrow" aria-hidden="true">→</span>
+                            </a>
+                        {/each}
+                    {:else}
+                        <p class="empty-state header-collision-text">
+                            No {modes[mode].title} posts tagged “{selectedTags[mode]}” yet.
+                        </p>
+                    {/if}
                 </div>
             </section>
         {/key}
@@ -759,6 +825,76 @@
         background: color-mix(in srgb, var(--blog-ink) 26%, transparent);
     }
 
+    .entries-list {
+        margin-top: 1rem;
+    }
+
+    .entry-card {
+        display: grid;
+        grid-template-columns: minmax(7rem, 0.35fr) minmax(0, 1fr) auto;
+        align-items: center;
+        gap: clamp(1rem, 3vw, 2rem);
+        padding: clamp(1rem, 2.5vw, 1.5rem) 0;
+        border-top: 1px solid color-mix(in srgb, var(--blog-ink) 24%, transparent);
+        color: inherit;
+        text-decoration: none;
+        transition: color 180ms ease, padding 180ms ease;
+    }
+
+    .entry-card:last-child {
+        border-bottom: 1px solid color-mix(in srgb, var(--blog-ink) 24%, transparent);
+    }
+
+    .entry-card:hover,
+    .entry-card:focus-visible {
+        color: var(--accent);
+        padding-inline: 0.5rem;
+    }
+
+    .entry-label {
+        color: var(--blog-muted);
+        font-size: 0.75rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+    }
+
+    .entry-copy {
+        min-width: 0;
+        display: grid;
+        gap: 0.35rem;
+    }
+
+    .entry-copy strong {
+        font-family: var(--font-display);
+        font-size: clamp(1.1rem, 2vw, 1.4rem);
+        line-height: 1.2;
+    }
+
+    .entry-copy > span {
+        color: var(--blog-muted);
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+
+    .entry-arrow {
+        font-size: 1.5rem;
+        transition: transform 180ms ease;
+    }
+
+    .entry-card:hover .entry-arrow,
+    .entry-card:focus-visible .entry-arrow {
+        transform: translateX(0.25rem);
+    }
+
+    .empty-state {
+        margin: 0;
+        padding: clamp(1.25rem, 3vw, 2rem) 0;
+        border-block: 1px solid color-mix(in srgb, var(--blog-ink) 24%, transparent);
+        color: var(--blog-muted);
+        font-size: 0.9rem;
+        line-height: 1.6;
+    }
+
     .koops-mode .content {
         position: relative;
     }
@@ -951,6 +1087,54 @@
         box-shadow: 0 0 0.5rem rgb(77 147 255 / 50%);
     }
 
+    .koops-view .entry-card {
+        margin-top: 0.85rem;
+        padding: clamp(1rem, 2.5vw, 1.4rem);
+        border: 1px solid #2559ff;
+        border-radius: 0.7rem 0.7rem 0.16rem 0.16rem;
+        color: #eef5ff;
+        background: linear-gradient(180deg, rgb(24 69 185 / 80%), rgb(5 23 91 / 88%));
+        font-family: 'KH Menu', var(--font-body);
+        box-shadow: inset 0 1px 0 rgb(36 174 255 / 42%);
+    }
+
+    .koops-view .entry-card:last-child {
+        border-bottom: 1px solid #2559ff;
+    }
+
+    .koops-view .entry-card:hover,
+    .koops-view .entry-card:focus-visible {
+        padding-inline: clamp(1rem, 2.5vw, 1.4rem);
+        border-color: #ff8c1a;
+        color: #fff7df;
+        background: linear-gradient(180deg, #9f350a, #4a1008);
+        box-shadow:
+            inset 0 1px 0 rgb(255 214 126 / 50%),
+            0 0 0.75rem rgb(255 93 15 / 46%);
+    }
+
+    .koops-view .entry-label,
+    .koops-view .entry-copy > span {
+        color: #b9d3ff;
+    }
+
+    .koops-view .entry-copy strong {
+        font-family: 'KH Gummi', 'KH Menu', sans-serif;
+        font-weight: 400;
+        letter-spacing: 0.025em;
+    }
+
+    .koops-view .empty-state {
+        margin-top: 0.85rem;
+        padding: clamp(1rem, 2.5vw, 1.4rem);
+        border: 1px solid #2559ff;
+        border-radius: 0.7rem 0.7rem 0.16rem 0.16rem;
+        color: #b9d3ff;
+        background: rgb(5 23 91 / 72%);
+        font-family: 'KH Menu', var(--font-body);
+        box-shadow: inset 0 1px 0 rgb(36 174 255 / 32%);
+    }
+
     @keyframes mode-enter {
         from {
             opacity: 0;
@@ -1012,6 +1196,15 @@
 
         .koops-view .topic-list {
             grid-template-columns: minmax(0, 1fr);
+        }
+
+        .entry-card {
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 0.75rem;
+        }
+
+        .entry-label {
+            grid-column: 1 / -1;
         }
     }
 

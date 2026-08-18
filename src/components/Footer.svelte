@@ -25,7 +25,6 @@
             <img
                 src="/images/ontariotech.svg"
                 alt="OTU Webring"
-                style="height: 20px; width: auto; opacity: 0.7; transition: opacity 0.2s ease;"
             />
         </a>
 
@@ -101,6 +100,22 @@ p {
 .webring-home img {
     display: block;
     flex: none;
+    width: auto;
+    height: 20px;
+    opacity: 0.7;
+    filter: brightness(0);
+    transition: opacity 0.2s ease;
+}
+
+@media (prefers-color-scheme: dark) {
+    .webring-home img {
+        filter: brightness(0) invert(1);
+    }
+}
+
+:global(html.koops-blog-active) .webring-home img,
+:global(html.koops-post-page) .webring-home img {
+    filter: brightness(0) invert(1);
 }
 
 .webring-navigation:hover,

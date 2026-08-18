@@ -1,0 +1,17 @@
+---
+import BlogPostLayout from './BlogPostLayout.astro';
+
+interface Props {
+    title: string;
+    description: string;
+    published: string;
+    readingTime: string;
+    heroImage: string;
+    heroAlt: string;
+    topics?: string[];
+}
+---
+
+<BlogPostLayout {...Astro.props} variant="koops">
+    <slot />
+</BlogPostLayout>
