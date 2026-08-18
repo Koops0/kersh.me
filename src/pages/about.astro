@@ -6,7 +6,7 @@ import About from '../components/About.svelte';
 ---
 
 <Layout>
-    <Header client:load currentPage="about" />
+    <Header client:idle={{ timeout: 350 }} currentPage="about" />
 
     <main>
         <!-- About Section with Strawberry squircle -->

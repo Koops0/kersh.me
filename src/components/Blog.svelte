@@ -124,7 +124,7 @@
                 on:click={() => selectMode('kersh')}
             >
                 <span class="selection-mark" aria-hidden="true"></span>
-                Kersh
+                <span class="header-collision-text">Kersh</span>
             </button>
             <button
                 type="button"
@@ -134,7 +134,7 @@
                 on:click={() => selectMode('koops')}
             >
                 <span class="selection-mark" aria-hidden="true"></span>
-                Koops
+                <span class="header-collision-text">Koops</span>
             </button>
         </div>
 
@@ -158,16 +158,16 @@
                                 on:click={() => selectTag(topic)}
                             >
                                 <span class="tag-selection" aria-hidden="true"></span>
-                                {topic}
+                                <span class="header-collision-text">{topic}</span>
                             </button>
                         </li>
                     {/each}
                 </ul>
 
                 <div class="entries-heading">
-                    <span>entries</span>
+                    <span class="header-collision-text">entries</span>
                     <span class="entries-rule" aria-hidden="true"></span>
-                    <span>00</span>
+                    <span class="header-collision-text">00</span>
                 </div>
             </section>
         {/key}
@@ -982,7 +982,9 @@
         }
 
         .koops-view h1 {
-            font-size: clamp(3.25rem, 19vw, 5rem);
+            max-width: 100%;
+            font-size: clamp(2.5rem, 14.5vw, 4rem);
+            white-space: nowrap;
         }
 
         .koops-view .topic-list {

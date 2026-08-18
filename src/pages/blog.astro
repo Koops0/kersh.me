@@ -6,7 +6,7 @@ import Blog from '../components/Blog.svelte';
 ---
 
 <Layout>
-    <Header client:load currentPage="blog" />
+    <Header client:idle={{ timeout: 350 }} currentPage="blog" />
 
     <main>
         <section class="section blog-section">

@@ -5,7 +5,7 @@ import Header from '../components/Header.svelte';
 import Intro from '../components/Intro.svelte';
 ---
 <Layout>
-    <Header client:load isHomePage={true} currentPage="home" />
+    <Header client:idle={{ timeout: 350 }} isHomePage={true} currentPage="home" />
 
     <main>
         <!-- Intro Section with all 5 blobs -->

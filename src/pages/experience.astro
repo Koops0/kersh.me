@@ -6,7 +6,7 @@ import Experience from '../components/Experience.svelte';
 ---
 
 <Layout>
-    <Header client:load currentPage="experience" />
+    <Header client:idle={{ timeout: 350 }} currentPage="experience" />
 
     <main>
         <section class="section experience-section">

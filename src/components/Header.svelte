@@ -133,6 +133,8 @@
         const mobileQuery = window.matchMedia('(max-width: 820px)');
         let surfaceObserver: IntersectionObserver | undefined;
         let headerResizeObserver: ResizeObserver | undefined;
+        let contentMutationObserver: MutationObserver | undefined;
+        let observedContentRoot: HTMLElement | undefined;
         const textBehindHeader = new Set<Element>();
 
         const resetMobileBrandForNavigation = () => {
@@ -144,6 +146,7 @@
             surfaceObserver?.disconnect();
             surfaceObserver = undefined;
             textBehindHeader.clear();
+            hasContentBehind = false;
 
             if (currentPage === 'home' || !headerEl) {
                 hasContentBehind = false;
@@ -152,15 +155,23 @@
 
             const contentRoot = document.querySelector<HTMLElement>('.about-container .content, main');
             if (!contentRoot) {
-                hasContentBehind = false;
                 return;
             }
 
+            if (observedContentRoot !== contentRoot) {
+                contentMutationObserver?.disconnect();
+                observedContentRoot = contentRoot;
+                contentMutationObserver = new MutationObserver(queueHeaderSurfaceSync);
+                contentMutationObserver.observe(contentRoot, {
+                    childList: true,
+                    subtree: true
+                });
+            }
+
             const textElements = Array.from(contentRoot.querySelectorAll<HTMLElement>(
-                '.mode-switch, h1, h2, h3, h4, h5, h6, p, li, blockquote, pre'
+                '.header-collision-text, h1, h2, h3, h4, h5, h6, p, blockquote, pre'
             ));
             if (textElements.length === 0) {
-                hasContentBehind = false;
                 return;
             }
 
@@ -221,6 +232,7 @@
             document.removeEventListener('astro:before-preparation', resetMobileBrandForNavigation);
             surfaceObserver?.disconnect();
             headerResizeObserver?.disconnect();
+            contentMutationObserver?.disconnect();
             if (scrambleFrame !== null) cancelAnimationFrame(scrambleFrame);
             if (surfaceFrame !== null) cancelAnimationFrame(surfaceFrame);
         };
