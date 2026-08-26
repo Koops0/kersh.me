@@ -1,5 +1,5 @@
 ---
-import KershPostLayout from '../../../layouts/KershPostLayout.astro';
+import KershPostLayout from "../../../layouts/KershPostLayout.astro";
 ---
 
 <KershPostLayout
@@ -9,42 +9,211 @@ import KershPostLayout from '../../../layouts/KershPostLayout.astro';
     readingTime="4 min structure"
     heroImage="/images/blog-kersh-template-hero.jpg"
     heroAlt="An overhead engineering desk with a notebook, microcontroller, jumper wires, plants, and coffee"
-    topics={['tech', 'side projects']}
+    topics={["tech", "side projects"]}
 >
     <p>
-        Open with the moment that made the post worth writing. Give the reader just enough context to care, then move quickly toward the useful idea. This paragraph is the place for the human reason behind the work.
+        I wanted to make a generic LinkedIn post about my twelve months here at
+        MDA Space. I wanted to talk about how fun the stuff I did was, how
+        fantastic the social aspects of it were, how interesting it was for me,
+        someone who isn't in engineering to work in aerospace, talk about being
+        grateful, blah, blah, blah. All of that is true, but the actual truth is
+        much more complicated that it ever needed to be. There were social
+        events. There was being left behind. There was mentorship. There was
+        miscommunication. There were interesting technologies. There were broken
+        boards (six of them). There was closeness. There was significant
+        rupture. There was even a point where I came frighteningly close to
+        there never being a Kershan Arulneswaran roaming around that office,
+        ever again. Despite all of that, I pulled through. Not everything went
+        back to the way it was before. Honestly, neither did I, far from it. But
+        somewhere in all of that sweet chaos, I learned a ridiculous amount
+        about engineering, about people, about myself. I made mistakes, some
+        minor ones, some that accidentally pushed away the people I loved the
+        most. I made friends. I built some cool shit. I broke some too. Somehow,
+        when I look back at the entire year instead of just its worst moments,
+        I'm still grateful I got to live it. And if I could go back in time? I'd
+        fucking do it all over again.
     </p>
 
-<h2>Before We Start</h2>
+    <h2>You Probably Need Some Context</h2>
+    <p>
+        I feel like many people here don't know who I am, so allow me to
+        introduce myself. Hi, I'm Kersh. I'm a Computer Science student at
+        Ontario Tech University, a Canadian University you've probably never
+        heard of, located in bumfuck nowhere, Ontario. Not in engineering by the
+        way, Computer Science, because Grade 12 me thought that Computer Science
+        and Computer Engineering were like 95% identical. Well, now I know.
+    </p>
+    <p>
+        Despite this, I worked with a robotics design team for three years now
+        as a programmer, lead and mentor, doing Robot in 3 Days and the ARC
+        (formerly RoboMaster NA) competition. I tinker with electronics as a
+        hobby, and spent a lot of time with computer vision and artificial
+        intelligence. Before MDA, I worked as a teaching assistant for a Java
+        application course and a co-op at a private school where I was a program
+        manager and facilitator for STEM summer education programs. Growing up,
+        I've always liked the combination of software and hardware, but this is
+        my first time actually working on this as a paid role. I was about to
+        learn very quickly that this is a completely different ballpark from
+        application development.
+    </p>
+    <h3>So, Why MDA?</h3>
+    <p>
+        June 15, 2025. I was sitting in my room, bored while building an
+        admittedly very easy Gunpla. My first co-op as a program manager intern
+        building content had been fun. But, it was only four months long, I was
+        missing that stability and continuity, and that schedule worked a hell
+        of a lot better for Waterloo students, like my fellow intern who went
+        there, than it did for someone at Ontario Tech. I needed something else.
+    </p>
+    <p>
+        More importantly, I wanted something technical. I wanted to work in a
+        field I was actually interested in, so I started casually scrolling
+        through LinkedIn for internships starting in the fall. Eventually, I
+        found a posting from MDA looking for a software intern. My thought
+        process was basically: “Hey, I'm a software student. I worked in
+        robotics. Robots are cool. This company seems cool. Looking at all of
+        the interns there, they seem cool. Eh, this could be interesting.” So I
+        applied.
+    </p>
+    <p>
+        I already knew MDA as the company behind Canadarm and Canadarm2, and I
+        knew they did a bunch of work with satellites too. But unlike a lot of
+        people who probably apply because they love aerospace, it was the
+        “Robotics” part of “Robotics and Space Operations” that hooked me in. I
+        wanted software that had to interact with actual hardware, and MDA
+        looked like a pretty damn good place to find it.
+    </p>
+    <p>
+        I was still curious about aerospace, though. Part of why I wanted
+        internships in the first place was to see all the weird places a
+        Computer Science degree could take me, and apparently space was one of
+        them. So I figured I'd blend in with the crowd. Go undercover. Become
+        James Bond. Learn what the hell everyone was talking about. And, like
+        probably 80% of people, I wanted to be an astronaut when I was a little
+        kid. By taking a job in the space industry, I wanted to see how the
+        industry responsible for things like that actually came together. How
+        Artemis II came together. How the ISS came together. How the Canadarm
+        came together.
+    </p>
+    <p>
+        Shit, it's slowly hitting me now, after a year, that I'm contributing to
+        the kind of thing that would've blown that kid's mind. It's also
+        objectively funny that I, a Computer Science student who originally
+        applied because “robot gud,” somehow ended up working on critical ground
+        and flight software. I don't know whether I should be proud, terrified,
+        or just fully embrace the aerospace larp. Fuck it. I'll embrace it.
+    </p>
+    <h3>Obviously, I Can't Tell You Everything</h3>
+    <p>
+        MDA is an aerospace company, which means a lot of the work happens
+        behind closed doors. I can talk about the surface-level stuff I worked
+        on, but I won't be sharing internal details about projects, tools,
+        systems, or anything else that isn't mine to share. This also isn't
+        meant to tell future interns or employees what their experience at MDA
+        will be like. I'm only writing about my experience, what I took away
+        from it, and the lessons I learned along the way. Treat everything here
+        as one person's perspective, not a definitive review of the company.
+        Finally, parts of this story get pretty dark. Sensitive acts will have a
+        trigger warning before them, so please read those sections at your own
+        discretion.
+    </p>
+    <h2>Act I — Tested My Fate</h2>
+    <p>
+        After an interview, a signed offer, a ton of security paperwork, and a
+        few weeks of waiting, I finally stepped foot in Brampton, ready to start
+        my first day. I was kinda nervous, especially since I still have
+        thoughts about my last co-op which ended a few days before. There was
+        even someone I actually knew who's also starting (context, we met at a
+        hackathon) that day. We did some onboarding, did a quick tour, and
+        waited until I was assigned to my team. When I got called, my onboarding
+        buddy told me that I was working on Canadarm2 ground software, but
+        little did I know when I set foot on that floor that something was about
+        to happen.
+    </p>
+    <p>
+        I was lost. LOST. I was wondering what everyone was talking about, what
+        the hell I was supposed to do, what "SSRMS" even means, what software
+        toolchain was used, why everyone was on vacation on my first day and why
+        all of these acronyms make ZERO sense. Fortunately, there were two
+        mechanical interns that did introduce me and another intern to some
+        resources, what this program actually is for the company, our
+        partnership with the Canadian Space Agency, and also introduced us to
+        the wider intern network. I also found out that I, an Ontario Tech
+        student, actually replaced an intern that was supposed to be from
+        Waterloo. Waterloo interns on that specific team were the rule and I was
+        the exception. Admittedly though, the introduction of the wider network
+        ultimately made me more lost than ever.
+    </p>
+    <p>
+        The thing is, I was at a pretty big disadvantage socially. Obviously,
+        I'm not in Engineering. I would be in Computer Engineering, but thank my
+        uni for not offering it. That's besides the point though. I was in a
+        department that rarely hires interns longer than four months, I came
+        from a school that definitely wasn't part of the usual pipeline, was the
+        only intern on my team, and that entire network mostly consisting of
+        either Mechanical or Aerospace majors. I was also on a different floor,
+        was always sat with full-timers instead of with other interns, doing a
+        fucking HONOURS THESIS WHILE ON CO-OP because I hate free time which was
+        a bad idea in hindsight, and many of the interns there already formed
+        tight social groups. This was significantly different from just me and a
+        Waterloo student at the last one. I needed to make a choice. Either I
+        could put my head down, do my job, and spend twelve months mostly by
+        myself, or I could deliberately put myself out there and try to become
+        part of a group of people I otherwise probably never would've met. For a
+        while, I was kinda toying with either option, but ultimately I wanted to
+        live this shit to the fullest in the twelve months I thought I had. And
+        this decision was amplified by one thing: basketball.
+    </p>
+    <p>
+        I love basketball. I'd say I'm pretty good at it. I love playing it, I
+        love watching it, I love yapping about it to my friends, I even did a
+        data analysis project to confirm that yes, centers are overpowered,
+        noob. I'm a Raptors fan until the day I die, and I will 100 percent shit
+        on Sixers fans who are still crying about 2019. You get the point.
+        Imagine my surprise when I found out there was an MDA intern NBA fantasy
+        league. I was glad that other people were into the same sports and
+        everything related to it as I was, and I was also glad that we could be
+        closer. Sure, it was just me, the same guy I met at a hackathon from
+        before, and eight more people that I was somewhat tight with at the
+        intern lunch table, but we did bond and became fast friends (in addition
+        to some others who weren't in the league ofc). Obviously, I was still a
+        little lost because of everything I had working against me socially but
+        during that time I felt calm.
+    </p>
+    <h2>Act II — I Found a Place That I Can Call Home</h2>
 
-<h2>You Probably Need Some Context</h2>
-<h3>So, Why MDA?</h3>
-    <h3>This Was Supposed to Be an Internship Post</h3>
-    <h3>About Stranger Than Heaven</h3>
-    <h3>The Five Acts</h3>
+    <h2>Act III — You Know I Can Take You Somewhere</h2>
 
-<h2>Act I — Tested My Fate</h2>
-
-<h2>Act II — I Found a Place That I Can Call Home</h2>
-
-<h2>Act III — You Know I Can Take You Somewhere</h2>
-
-<h2>Act IV — Took All My Pain and Made a Weapon</h2>
+    <h2>Act IV — Took All My Pain and Made a Weapon</h2>
     <blockquote>
-        TRIGGER WARNING: car accident, physical injury, workplace conflict, emotional distress, panic and references to severe mental-health struggles.
+        TW: car accident, physical injury, workplace conflict, grief, panic,
+        suicidal ideation and mental health struggles. If you or someone you
+        know is struggling with mental health, please reach out to 988 or your
+        local crisis line. You are not alone, and there are people who want to
+        help you.
     </blockquote>
-<h2>Act V — Paved My Way, Won't Live In My Past</h2>
-<h3>So, What Did I Actually Do?</h3>
+    <p>
+        Happy birthday to me, happy birthday to me, happy birthday to me, happy
+        birthday to me. My birthday was a good day, life was good, I announced a
+        ping pong tournament, I got plenty of stuff. May 22nd was also the last
+        good day that I would have for months. Keep that date in mind, there
+        will be a quiz on this.
+    </p>
 
-<h3>What Did I Get Out of All This?</h3>
+    <h2>Act V — Paved My Way, Won't Live In My Past</h2>
+    <h3>So, What Did I Actually Do?</h3>
 
-<h3>What's Next?</h3>
+    <h3>What Did I Get Out of All This?</h3>
 
-<h2>Roll Credits</h2>
+    <h3>What's Next?</h3>
+
+    <h2>Roll Credits</h2>
 
     <h2>Start with the useful part</h2>
     <p>
-        A Kersh post should feel considered without feeling formal. Explain the problem in plain language, include the constraints that shaped the outcome, and keep every technical detail attached to a reason.
+        A Kersh post should feel considered without feeling formal. Explain the
+        problem in plain language, include the constraints that shaped the
+        outcome, and keep every technical detail attached to a reason.
     </p>
     <ul>
         <li>State the problem and why it mattered.</li>
@@ -53,12 +222,15 @@ import KershPostLayout from '../../../layouts/KershPostLayout.astro';
     </ul>
 
     <blockquote>
-        The strongest detail is usually the one that explains why the obvious solution was not quite right.
+        The strongest detail is usually the one that explains why the obvious
+        solution was not quite right.
     </blockquote>
 
     <h2>Show the work</h2>
     <p>
-        Use a short example when the implementation matters. The layout supports inline <code>technical details</code>, lists, links, pull quotes, and focused code blocks without turning the post into documentation.
+        Use a short example when the implementation matters. The layout supports
+        inline <code>technical details</code>, lists, links, pull quotes, and
+        focused code blocks without turning the post into documentation.
     </p>
     <pre><code>const lesson = &#123;
   constraint: 'what made this hard',
@@ -68,6 +240,9 @@ import KershPostLayout from '../../../layouts/KershPostLayout.astro';
 
     <h2>End with what changed</h2>
     <p>
-        Close on the lesson, not a recap. Name what you would keep, what you would change next time, and the question you are still thinking about. That gives the post somewhere to land—and the next one somewhere to begin.
+        Close on the lesson, not a recap. Name what you would keep, what you
+        would change next time, and the question you are still thinking about.
+        That gives the post somewhere to land—and the next one somewhere to
+        begin.
     </p>
 </KershPostLayout>

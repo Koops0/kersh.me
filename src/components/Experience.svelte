@@ -54,7 +54,7 @@
             position: 'Programming Lead and Mentor',
             company: 'Ontario Tech Robotics',
             description: 'programming lead and mentor for robot in 3 days, arc competition and website',
-            years: '2023-2026',
+            years: '2023-2027',
             website: 'https://www.ot-robotics.com'
         }
     ];
@@ -110,7 +110,7 @@
         demo: 'https://github.com/Koops0/TekkenAIPublic',
         github: 'https://github.com/Koops0/TekkenAI',
         description: 'reinforcement learning x tekken 8, a match made in yakushima',
-        years: '2025 - 2026'
+        years: '2024'
         },
         {
          name: 'Ri3D 2024',
