@@ -1,0 +1,751 @@
+---
+import Layout from './Layout.astro';
+import Header from '../components/Header.svelte';
+import Footer from '../components/Footer.svelte';
+
+interface Props {
+    variant: 'kersh' | 'koops';
+    title: string;
+    description: string;
+    published: string;
+    readingTime: string;
+    heroImage: string;
+    heroAlt: string;
+    topics?: string[];
+}
+
+const {
+    variant,
+    title,
+    description,
+    published,
+    readingTime,
+    heroImage,
+    heroAlt,
+    topics = []
+} = Astro.props;
+
+const modeName = variant === 'kersh' ? 'Kersh' : 'Koops';
+---
+
+<Layout
+    title={`${title} — ${modeName}`}
+    description={description}
+    pageClass={`blog-post-page ${variant}-post-page`}
+    lightThemeColor={variant === 'koops' ? '#030817' : '#f4f1ea'}
+    darkThemeColor={variant === 'koops' ? '#030817' : '#050709'}
+>
+    <Header client:idle={{ timeout: 350 }} currentPage="blog" allowCurrentPageNavigation={true} />
+
+    <main class:list={['post-shell', `${variant}-post`]}>
+        <section class="post-hero" aria-labelledby="post-title">
+            <img
+                class="hero-image"
+                src={heroImage}
+                alt={heroAlt}
+                loading="eager"
+                decoding="async"
+                fetchpriority="high"
+            />
+            <div class="hero-shade" aria-hidden="true"></div>
+
+            <div class="hero-inner">
+                <a class="back-link header-collision-text" href={`/blog?mode=${variant}`}>
+                    <span aria-hidden="true">←</span>
+                    all {modeName} entries
+                </a>
+
+                <header class="post-header">
+                    <p class="mode-label">{modeName} / post template</p>
+                    <h1 id="post-title">{title}</h1>
+                    <p class="dek">{description}</p>
+
+                    <div class="post-meta" aria-label="Post details">
+                        <span>{published}</span>
+                        <span aria-hidden="true">/</span>
+                        <span>{readingTime}</span>
+                    </div>
+
+                    {topics.length > 0 && (
+                        <ul class="post-topics" aria-label="Topics">
+                            {topics.map((topic) => (
+                                <li><a href={`/blog?mode=${variant}&tag=${encodeURIComponent(topic)}`}>{topic}</a></li>
+                            ))}
+                        </ul>
+                    )}
+                </header>
+
+                <a class="scroll-cue" href="#article" aria-label="Continue to article">
+                    <span>read</span>
+                    <span aria-hidden="true">↓</span>
+                </a>
+            </div>
+        </section>
+
+        <article id="article">
+            <div class="post-content">
+                <slot />
+            </div>
+
+            <footer class="post-end">
+                <span>{variant === 'kersh' ? 'That’s the note.' : 'save complete.'}</span>
+                <a href={`/blog?mode=${variant}`}>Back to {modeName}</a>
+            </footer>
+        </article>
+    </main>
+
+    <Footer />
+</Layout>
+
+<style>
+    @font-face {
+        font-family: 'KH Gummi';
+        src: url('/fonts/KHGummi.otf') format('opentype');
+        font-display: swap;
+    }
+
+    @font-face {
+        font-family: 'KH Menu';
+        src: url('/fonts/KHMenu.otf') format('opentype');
+        font-display: swap;
+    }
+
+    :global(html.koops-post-page) {
+        color-scheme: dark;
+        --ink: #f0f5ff;
+        --muted-ink: rgb(221 232 255 / 72%);
+        --accent: #8bc2ff;
+        --canvas: #030817;
+        --backdrop:
+            radial-gradient(circle 31rem at 74% 24%, rgb(86 196 255 / 30%) 0%, rgb(28 76 218 / 20%) 34%, transparent 68%),
+            radial-gradient(circle 26rem at 18% 82%, rgb(151 200 67 / 21%) 0%, rgb(241 125 30 / 15%) 36%, transparent 68%),
+            linear-gradient(145deg, #040818, #09132e 52%, #020511);
+        --icon-hover: rgb(116 174 255 / 16%);
+    }
+
+    :global(html.kersh-post-page .bg-shape) {
+        display: none !important;
+    }
+
+    :global(html.blog-post-page) {
+        scroll-padding-top: 5rem;
+    }
+
+    :global(html.blog-post-page .site-header) {
+        color: var(--ink);
+        background: transparent;
+        transition:
+            color 460ms cubic-bezier(0.22, 1, 0.36, 1),
+            background-color 180ms ease,
+            box-shadow 460ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    :global(html.blog-post-page .site-header.has-content-behind) {
+        background-color: var(--canvas);
+    }
+
+    :global(html.blog-post-page .site-header::after) {
+        content: '';
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        pointer-events: none;
+        opacity: 0;
+        border-bottom: 2px solid #143dff;
+        background:
+            linear-gradient(180deg, #0d235b, #030a2a),
+            #050f2a;
+        box-shadow:
+            inset 0 -1px 0 #0aa7ff,
+            0 0.3rem 1.4rem rgb(4 31 255 / 34%);
+        transition: opacity 460ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    :global(html.koops-post-page .site-header) {
+        color: #f0f5ff;
+        font-family: 'KH Menu', var(--font-body);
+    }
+
+    :global(html.koops-post-page .site-header::before) {
+        background:
+            linear-gradient(180deg, #0d235b, #030a2a),
+            #050f2a;
+    }
+
+    :global(html.koops-post-page .site-header.has-content-behind::after) {
+        opacity: 1;
+    }
+
+    :global(html.blog-post-page .site-header .brand) {
+        border: 0;
+        transition:
+            font-size 150ms ease,
+            padding 460ms cubic-bezier(0.22, 1, 0.36, 1),
+            color 460ms ease,
+            background-color 460ms ease,
+            box-shadow 460ms ease,
+            text-shadow 460ms ease;
+    }
+
+    :global(html.koops-post-page .site-header .brand) {
+        padding: 0.25rem 0.75rem;
+        border-radius: 0.7rem 0.7rem 0.2rem 0.2rem;
+        color: #f7fbff;
+        background: linear-gradient(180deg, rgb(33 75 183 / 58%), rgb(8 24 82 / 32%));
+        font-family: 'KH Gummi', 'KH Menu', sans-serif;
+        font-weight: 400;
+        font-stretch: normal;
+        font-variation-settings: normal;
+        letter-spacing: 0.035em;
+        text-shadow:
+            0 2px 0 #63789d,
+            0 0 0.8rem rgb(105 171 255 / 50%);
+        box-shadow:
+            inset 0 0 0 1px rgb(62 112 255 / 58%),
+            inset 0 -1px 0 rgb(20 139 255 / 52%);
+    }
+
+    :global(html.blog-post-page .site-header .page-links a) {
+        transition:
+            padding 460ms cubic-bezier(0.22, 1, 0.36, 1),
+            color 460ms ease,
+            background-color 460ms ease,
+            box-shadow 460ms ease,
+            text-shadow 460ms ease;
+    }
+
+    :global(html.koops-post-page .site-header .page-links a) {
+        font-family: 'KH Menu', var(--font-body);
+        font-weight: 400;
+        letter-spacing: 0.035em;
+        text-shadow: 0 0 0.65rem rgb(105 171 255 / 24%);
+    }
+
+    :global(html.koops-post-page .site-header .page-links a.current-page) {
+        padding: 0.25rem 0.8rem;
+        border-radius: 0.7rem 0.7rem 0.2rem 0.2rem;
+        color: #fff7df;
+        background: linear-gradient(180deg, #bd3e08, #5b1307);
+        box-shadow:
+            inset 0 0 0 1px #ff8c1a,
+            inset 0 1px 0 rgb(255 214 126 / 58%),
+            0 0 0.8rem rgb(255 93 15 / 62%);
+    }
+
+    :global(html.blog-post-page .site-header .icon) {
+        border: 0;
+        transition:
+            color 200ms ease,
+            transform 200ms ease,
+            background-color 460ms ease,
+            box-shadow 460ms ease;
+    }
+
+    :global(html.koops-post-page .site-header .icon) {
+        background: rgb(40 86 172 / 14%);
+        box-shadow: inset 0 0 0 1px rgb(164 202 255 / 20%);
+    }
+
+    :global(html.koops-post-page .site-footer) {
+        color: #e1ebff;
+        font-family: 'KH Menu', var(--font-body);
+    }
+
+    :global(html.koops-post-page .site-footer p) {
+        color: #9fc7ff;
+        font-family: 'KH Menu', var(--font-body);
+        font-weight: 400;
+    }
+
+    .post-shell {
+        position: relative;
+        min-height: 100vh;
+        min-height: 100svh;
+        background-color: var(--canvas);
+        background-image: var(--backdrop);
+        background-attachment: fixed;
+    }
+
+    .post-hero {
+        position: relative;
+        isolation: isolate;
+        min-height: calc(100vh - 5.5rem);
+        min-height: calc(100svh - 5.5rem);
+        display: grid;
+        overflow: hidden;
+        color: #fff;
+        background-color: var(--canvas);
+        background-image: var(--backdrop);
+        background-attachment: fixed;
+    }
+
+    .hero-image,
+    .hero-shade {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        -webkit-mask-image: linear-gradient(
+            to bottom,
+            #000 0%,
+            #000 calc(100% - clamp(5rem, 14vh, 9rem)),
+            transparent 100%
+        );
+        mask-image: linear-gradient(
+            to bottom,
+            #000 0%,
+            #000 calc(100% - clamp(5rem, 14vh, 9rem)),
+            transparent 100%
+        );
+    }
+
+    .hero-image {
+        z-index: -2;
+        object-fit: cover;
+        object-position: center;
+        transform: scale(1.01);
+    }
+
+    .hero-shade {
+        z-index: -1;
+        background:
+            linear-gradient(180deg, rgb(0 0 0 / 58%) 0%, rgb(0 0 0 / 12%) 34%, rgb(0 0 0 / 38%) 66%, rgb(0 0 0 / 86%) 100%),
+            linear-gradient(90deg, rgb(0 0 0 / 42%), transparent 68%);
+    }
+
+    .hero-inner {
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        min-height: inherit;
+        display: grid;
+        grid-template-rows: auto 1fr;
+        align-items: end;
+        padding:
+            clamp(1.25rem, 3vw, 2.5rem)
+            max(clamp(1rem, 5vw, 4.5rem), env(safe-area-inset-right))
+            clamp(1.5rem, 4vw, 3rem)
+            max(clamp(1rem, 5vw, 4.5rem), env(safe-area-inset-left));
+    }
+
+    .back-link {
+        width: fit-content;
+        display: flex;
+        align-items: center;
+        align-self: start;
+        gap: 0.55rem;
+        color: rgb(255 255 255 / 82%);
+        font-size: 0.82rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-decoration: none;
+        text-transform: uppercase;
+    }
+
+    .back-link:hover,
+    .scroll-cue:hover {
+        color: #fff;
+    }
+
+    .post-header {
+        width: 100%;
+        align-self: end;
+        padding: clamp(1rem, 2.5vw, 2rem) 0 clamp(2.75rem, 5vh, 4rem);
+    }
+
+    .mode-label {
+        margin: 0 0 0.8rem;
+        color: #ead8ff;
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.13em;
+        text-transform: uppercase;
+        text-shadow: 0 1px 0.6rem #000;
+    }
+
+    h1 {
+        width: 100%;
+        max-width: none;
+        margin: 0;
+        color: #fff;
+        font-family: var(--font-display);
+        font-size: clamp(2.25rem, 5vw, 4.6rem);
+        font-weight: 800;
+        font-stretch: 125%;
+        font-variation-settings: 'wdth' 125, 'wght' 800;
+        letter-spacing: -0.055em;
+        line-height: 0.94;
+        text-wrap: pretty;
+        text-shadow: 0 0.12em 0.55em rgb(0 0 0 / 58%);
+    }
+
+    .dek {
+        max-width: 66rem;
+        margin: clamp(0.85rem, 2vw, 1.35rem) 0 0;
+        color: rgb(255 255 255 / 86%);
+        font-size: clamp(0.9rem, 1.5vw, 1.1rem);
+        line-height: 1.55;
+        text-shadow: 0 1px 0.7rem #000;
+    }
+
+    .post-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.65rem;
+        margin-top: 1.35rem;
+        color: rgb(255 255 255 / 72%);
+        font-size: 0.78rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
+    .post-topics {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin: 1rem 0 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .post-topics a {
+        display: block;
+        padding: 0.38rem 0.7rem;
+        border: 1px solid rgb(255 255 255 / 42%);
+        border-radius: 999px;
+        color: #fff;
+        background: rgb(0 0 0 / 24%);
+        backdrop-filter: blur(8px);
+        font-size: 0.74rem;
+        text-decoration: none;
+    }
+
+    .post-topics a:hover,
+    .post-topics a:focus-visible {
+        border-color: #fff;
+        background: rgb(255 255 255 / 16%);
+    }
+
+    .scroll-cue {
+        position: absolute;
+        right: max(clamp(1rem, 5vw, 4.5rem), env(safe-area-inset-right));
+        bottom: clamp(1.5rem, 4vw, 3rem);
+        width: fit-content;
+        display: flex;
+        align-items: center;
+        gap: 0.55rem;
+        color: var(--ink);
+        font-size: 0.75rem;
+        letter-spacing: 0.12em;
+        text-decoration: none;
+        text-transform: uppercase;
+        text-shadow: 0 1px 0.65rem var(--canvas);
+    }
+
+    article {
+        width: min(calc(100% - 2rem), 90rem);
+        margin: 0 auto;
+        padding: clamp(4rem, 9vw, 8rem) clamp(0rem, 3vw, 2.5rem);
+    }
+
+    .post-content {
+        width: 100%;
+        margin-inline: auto;
+    }
+
+    :global(.post-content > :first-child) {
+        margin-top: 0;
+        color: var(--ink);
+        font-size: clamp(1.15rem, 2.2vw, 1.35rem);
+        line-height: 1.72;
+    }
+
+    :global(.post-content h2) {
+        margin: 3.5rem 0 1rem;
+        color: var(--ink);
+        font-size: clamp(1.8rem, 4vw, 2.75rem);
+        line-height: 1.08;
+    }
+
+    :global(.post-content h3) {
+        margin: 2.25rem 0 0.75rem;
+        color: var(--ink);
+        font-size: clamp(1.15rem, 2.5vw, 1.45rem);
+    }
+
+    :global(.post-content p),
+    :global(.post-content li) {
+        color: var(--muted-ink);
+        font-size: clamp(1rem, 1.8vw, 1.08rem);
+        line-height: 1.8;
+    }
+
+    :global(.post-content p) {
+        margin: 1.15rem 0;
+    }
+
+    :global(.post-content ul),
+    :global(.post-content ol) {
+        display: grid;
+        gap: 0.55rem;
+        padding-left: 1.5rem;
+    }
+
+    :global(.post-content a) {
+        color: var(--accent);
+        text-underline-offset: 0.22em;
+    }
+
+    :global(.post-content blockquote) {
+        margin: 2.5rem 0;
+        padding: 0.25rem 0 0.25rem 1.35rem;
+        border-left: 3px solid #70458f;
+        color: var(--ink);
+        font-family: var(--font-display);
+        font-size: clamp(1.25rem, 3vw, 1.75rem);
+        font-weight: 700;
+        line-height: 1.45;
+    }
+
+    :global(.post-content code) {
+        padding: 0.15em 0.35em;
+        border-radius: 0.25rem;
+        background: color-mix(in srgb, var(--ink) 9%, transparent);
+        color: var(--ink);
+        font-size: 0.9em;
+    }
+
+    :global(.post-content pre) {
+        margin: 1.75rem 0;
+        padding: 1.25rem;
+        overflow-x: auto;
+        border: 1px solid color-mix(in srgb, var(--ink) 18%, transparent);
+        border-radius: 0.65rem;
+        background: color-mix(in srgb, var(--canvas) 82%, #000 18%);
+        line-height: 1.65;
+    }
+
+    :global(.post-content pre code) {
+        padding: 0;
+        background: none;
+    }
+
+    .post-end {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        margin: clamp(4rem, 9vw, 7rem) auto 0;
+        padding-top: 1.25rem;
+        border-top: 1px solid color-mix(in srgb, var(--ink) 24%, transparent);
+        color: var(--muted-ink);
+        font-size: 0.82rem;
+    }
+
+    .post-end a {
+        color: inherit;
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+    .post-end a:hover {
+        color: var(--accent);
+    }
+
+    .koops-post,
+    .koops-post .back-link,
+    .koops-post .post-header,
+    .koops-post .post-content,
+    .koops-post .post-end {
+        font-family: 'KH Menu', var(--font-body);
+    }
+
+    .koops-post .post-hero {
+        border-bottom: 2px solid #143dff;
+        box-shadow: inset 0 -1px 0 #0aa7ff, 0 0.8rem 2rem rgb(12 47 255 / 30%);
+    }
+
+    .koops-post .hero-shade {
+        background:
+            linear-gradient(180deg, rgb(1 4 15 / 58%) 0%, transparent 35%, rgb(2 7 25 / 34%) 62%, rgb(2 5 17 / 94%) 100%),
+            linear-gradient(90deg, rgb(3 8 30 / 50%), transparent 72%);
+    }
+
+    .koops-post .back-link {
+        color: #b9d3ff;
+        font-weight: 400;
+    }
+
+    .koops-post .mode-label {
+        color: #ffad55;
+        font-weight: 400;
+        text-shadow: 0 0 0.65rem rgb(255 104 22 / 66%);
+    }
+
+    .koops-post h1 {
+        width: 100%;
+        max-width: none;
+        color: #f7fbff;
+        font-family: 'KH Gummi', 'KH Menu', sans-serif;
+        font-size: clamp(2.15rem, 4.6vw, 4.2rem);
+        font-weight: 400;
+        font-stretch: normal;
+        font-variation-settings: normal;
+        letter-spacing: 0.01em;
+        text-shadow: 0 2px 0 #6e82a6, 0 5px 0 #17233c, 0 0 1.2rem rgb(101 165 255 / 44%);
+    }
+
+    .koops-post .post-topics a {
+        border-color: #1d7cff;
+        border-radius: 0.55rem 0.55rem 0.12rem 0.12rem;
+        color: #dceaff;
+        background: rgb(12 43 133 / 68%);
+        box-shadow: inset 0 1px 0 rgb(36 174 255 / 32%);
+    }
+
+    .koops-post .post-topics a:hover,
+    .koops-post .post-topics a:focus-visible {
+        border-color: #ff8c1a;
+        color: #fff7df;
+        background: rgb(159 53 10 / 78%);
+    }
+
+    .koops-post article {
+        position: relative;
+        margin-block: clamp(2rem, 5vw, 4rem);
+        padding: clamp(3rem, 7vw, 6rem) clamp(1.25rem, 5vw, 4.5rem);
+        border: 2px solid #143dff;
+        border-radius: 1.15rem 1.15rem 0.25rem 0.25rem;
+        background:
+            linear-gradient(90deg, rgb(10 42 132 / 82%), rgb(3 13 57 / 94%)),
+            repeating-linear-gradient(0deg, rgb(255 255 255 / 3%) 0 1px, transparent 1px 4px);
+        box-shadow:
+            inset 0 1px 0 #0aa7ff,
+            inset 0 -1px 0 rgb(6 117 255 / 68%),
+            0 0 1.5rem rgb(12 47 255 / 38%);
+    }
+
+    .koops-post article::before {
+        content: 'field notes';
+        position: absolute;
+        left: 1rem;
+        bottom: calc(100% - 0.15rem);
+        min-width: 7rem;
+        padding: 0.08rem 0.8rem 0.15rem;
+        border: 1px solid #536bff;
+        border-radius: 0.9rem 0.9rem 0.15rem 0.15rem;
+        color: #fff;
+        background: linear-gradient(180deg, #304bdb, #101469);
+        font-family: 'KH Menu', var(--font-body);
+        font-size: 0.8rem;
+        letter-spacing: 0.08em;
+        text-align: center;
+        text-transform: uppercase;
+        box-shadow: 0 0 0.65rem rgb(45 78 255 / 54%);
+    }
+
+    .koops-post :global(.post-content > :first-child),
+    .koops-post :global(.post-content h2),
+    .koops-post :global(.post-content h3) {
+        color: #f7fbff;
+    }
+
+    .koops-post :global(.post-content p),
+    .koops-post :global(.post-content li) {
+        color: rgb(225 235 255 / 82%);
+    }
+
+    .koops-post :global(.post-content h2),
+    .koops-post :global(.post-content h3) {
+        font-family: 'KH Gummi', 'KH Menu', sans-serif;
+        font-weight: 400;
+        font-stretch: normal;
+        font-variation-settings: normal;
+        letter-spacing: 0.025em;
+    }
+
+    .koops-post :global(.post-content h2) {
+        padding-bottom: 0.45rem;
+        border-bottom: 1px solid #1d7cff;
+        text-shadow: 0 0 0.8rem rgb(105 171 255 / 32%);
+    }
+
+    .koops-post :global(.post-content blockquote) {
+        padding: 1rem 1.15rem;
+        border: 1px solid #ff8c1a;
+        border-radius: 0.7rem 0.7rem 0.15rem 0.15rem;
+        color: #fff7df;
+        background: linear-gradient(180deg, rgb(159 53 10 / 76%), rgb(74 16 8 / 86%));
+        font-family: 'KH Menu', var(--font-body);
+        font-size: clamp(1.05rem, 2.5vw, 1.35rem);
+        font-weight: 400;
+        box-shadow: 0 0 0.7rem rgb(255 93 15 / 28%);
+    }
+
+    .koops-post :global(.post-content pre) {
+        border-color: #2559ff;
+        border-radius: 0.6rem 0.6rem 0.14rem 0.14rem;
+        background: #020718;
+        box-shadow: inset 0 1px 0 rgb(36 174 255 / 28%);
+    }
+
+    .koops-post .post-end {
+        border-color: #2559ff;
+        color: #a9c9fa;
+    }
+
+    @media (prefers-color-scheme: dark) {
+        .kersh-post :global(.post-content blockquote) {
+            border-color: #b99add;
+        }
+    }
+
+    @media (max-width: 820px) {
+        .post-shell,
+        .post-hero {
+            background-attachment: scroll;
+        }
+
+        .post-hero {
+            min-height: calc(100vh - 4.75rem);
+            min-height: calc(100svh - 4.75rem);
+        }
+
+        .post-header {
+            padding: 1.25rem 0 4rem;
+        }
+
+        h1 {
+            font-size: clamp(2.05rem, 8.5vw, 3.5rem);
+        }
+
+        .koops-post h1 {
+            font-size: clamp(1.95rem, 8vw, 3.25rem);
+        }
+    }
+
+    @media (max-width: 520px) {
+        .hero-inner {
+            padding-bottom: max(1.25rem, env(safe-area-inset-bottom));
+        }
+
+        .dek {
+            font-size: 0.95rem;
+        }
+
+        .scroll-cue {
+            right: auto;
+            left: max(clamp(1rem, 5vw, 4.5rem), env(safe-area-inset-left));
+        }
+
+        .post-end {
+            flex-direction: column;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .hero-image {
+            transform: none;
+        }
+    }
+</style>

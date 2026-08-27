@@ -8,6 +8,7 @@
 
     export let isHomePage = false;
     export let currentPage: 'home' | 'about' | 'blog' | 'experience' | '' = '';
+    export let allowCurrentPageNavigation = false;
 
     let titleEl: HTMLElement | null = null;
     let headerEl: HTMLElement | null = null;
@@ -112,7 +113,7 @@
         event: MouseEvent,
         page: 'home' | 'about' | 'blog' | 'experience'
     ) {
-        if (currentPage === page) {
+        if (currentPage === page && !allowCurrentPageNavigation) {
             event.preventDefault();
             return;
         }

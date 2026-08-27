@@ -1,19 +1,35 @@
 ---
 import { ClientRouter } from 'astro:transitions';
 import Font from 'astro/components/Font.astro';
+
+interface Props {
+    title?: string;
+    description?: string;
+    pageClass?: string;
+    lightThemeColor?: string;
+    darkThemeColor?: string;
+}
+
+const {
+    title = 'Kershan Arulneswaran',
+    description = 'Kershan Arulneswaran is a software engineer building embedded systems, robotics, computer vision, and ambitious software.',
+    pageClass = '',
+    lightThemeColor = '#f4f1ea',
+    darkThemeColor = '#050709'
+} = Astro.props;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" class={pageClass}>
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-        <meta name="theme-color" content="#f4f1ea" media="(prefers-color-scheme: light)" />
-        <meta name="theme-color" content="#050709" media="(prefers-color-scheme: dark)" />
-        <meta name="description" content="Kershan Arulneswaran is a software engineer building embedded systems, robotics, computer vision, and ambitious software." />
+        <meta name="theme-color" content={lightThemeColor} media="(prefers-color-scheme: light)" />
+        <meta name="theme-color" content={darkThemeColor} media="(prefers-color-scheme: dark)" />
+        <meta name="description" content={description} />
         <link rel="icon" type="image/png" href="/favicon.png?v=1" />
         <meta name="generator" content={Astro.generator} />
-        <title>Kershan Arulneswaran</title>
+        <title>{title}</title>
         <ClientRouter />
         <Font cssVariable="--font-archivo" preload />
         <Font cssVariable="--font-red-hat-mono" preload />

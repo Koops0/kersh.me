@@ -1,5 +1,15 @@
-const CACHE_NAME = 'kersh-me-v3';
-const APP_SHELL = ['/', '/about/', '/blog/', '/experience/', '/favicon.png?v=1'];
+const CACHE_NAME = 'kersh-me-v5';
+const APP_SHELL = [
+    '/',
+    '/about/',
+    '/blog/',
+    '/blog/kersh/template/',
+    '/blog/koops/template/',
+    '/images/blog-kersh-template-hero.jpg',
+    '/images/blog-koops-template-hero.jpg',
+    '/experience/',
+    '/favicon.png?v=1'
+];
 
 self.addEventListener('install', (event) => {
     event.waitUntil(

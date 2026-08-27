@@ -1,0 +1,46 @@
+---
+import KershPostLayout from '../../../layouts/KershPostLayout.astro';
+---
+
+<KershPostLayout
+    title="A thoughtful title goes here"
+    description="Use this opening to make one clear promise: what the reader will understand, build, or reconsider by the end."
+    published="template preview"
+    readingTime="4 min structure"
+    heroImage="/images/blog-kersh-template-hero.jpg"
+    heroAlt="An overhead engineering desk with a notebook, microcontroller, jumper wires, plants, and coffee"
+    topics={['tech', 'side projects']}
+>
+    <p>
+        Open with the moment that made the post worth writing. Give the reader just enough context to care, then move quickly toward the useful idea. This paragraph is the place for the human reason behind the work.
+    </p>
+
+    <h2>Start with the useful part</h2>
+    <p>
+        A Kersh post should feel considered without feeling formal. Explain the problem in plain language, include the constraints that shaped the outcome, and keep every technical detail attached to a reason.
+    </p>
+    <ul>
+        <li>State the problem and why it mattered.</li>
+        <li>Show the decision that changed the direction.</li>
+        <li>Leave the reader with something they can reuse.</li>
+    </ul>
+
+    <blockquote>
+        The strongest detail is usually the one that explains why the obvious solution was not quite right.
+    </blockquote>
+
+    <h2>Show the work</h2>
+    <p>
+        Use a short example when the implementation matters. The layout supports inline <code>technical details</code>, lists, links, pull quotes, and focused code blocks without turning the post into documentation.
+    </p>
+    <pre><code>const lesson = &#123;
+  constraint: 'what made this hard',
+  choice: 'what you tried',
+  result: 'what changed'
+&#125;;</code></pre>
+
+    <h2>End with what changed</h2>
+    <p>
+        Close on the lesson, not a recap. Name what you would keep, what you would change next time, and the question you are still thinking about. That gives the post somewhere to land—and the next one somewhere to begin.
+    </p>
+</KershPostLayout>
