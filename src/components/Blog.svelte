@@ -25,32 +25,8 @@
     }>;
 
     const entries = {
-        kersh: [{
-            title: 'This Was Supposed to Be a Normal Software Internship',
-            description: 'Instead, I got space robotics, embedded software, radiation testing, broken hardware, a couple of genuinely awful months, and a much clearer idea of the engineer I want to become.',
-            href: '/blog/kersh/mda',
-            label: '',
-            topics: ['tech', 'work + events']
-        },{
-            title: 'The Kersh post template',
-            description: 'A clear, editorial structure for technical notes, project stories, events, and everything in between.',
-            href: '/blog/kersh/template',
-            label: 'template preview',
-            topics: ['tech', 'side projects']
-        }],
-        koops: [{
-            title: 'So, Square Enix Showed More Kingdom Hearts 4.',
-            description: 'This was a massive mistake.',
-            href: '/blog/koops/kh4',
-            label: '',
-            topics: ['deep dives']
-        },{
-            title: 'The Koops post template',
-            description: 'A louder field-note format for rabbit holes, reviews, rants, and deeply unnecessary investigations.',
-            href: '/blog/koops/template',
-            label: 'load preview',
-            topics: ['deep dives', 'miscellany']
-        }]
+        kersh: [],
+        koops: []
     } satisfies Record<BlogMode, Array<{
         title: string;
         description: string;
