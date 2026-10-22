@@ -306,7 +306,7 @@
             <a class="icon" href="https://www.linkedin.com/in/kersharul" aria-label="LinkedIn" on:click={closeMenu}>
                 <span class="icon-wrap" aria-hidden="true"><FaLinkedin /></span>
             </a>
-            <a class="icon" href="https://drive.google.com/file/d/1oJx_dYSsUtOpP0nd0aOzF97TZMjGUcdn" aria-label="Resume" on:click={closeMenu}>
+            <a class="icon" href="https://drive.google.com/file/d/1Dqp66KP4obUQS74ZEotIgPimoJ3lb0iB" aria-label="Resume" on:click={closeMenu}>
                 <span class="icon-wrap" aria-hidden="true"><FaFileAlt /></span>
             </a>
             <a class="icon" href="mailto:kershan.arulneswaran@gmail.com" aria-label="Email Kershan" on:click={closeMenu}>

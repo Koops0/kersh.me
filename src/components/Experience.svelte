@@ -26,7 +26,7 @@
             iconAlt: 'MDA Logo',
             position: 'Software Engineer Intern',
             company: 'MDA Space',
-            description: 'canadarm2 ground and canadarm3 embedded flight software development',
+            description: 'canadarm2 ground, canadarm3 prototype flight, osiris-apex tools',
             years: '2025-2027',
             website: 'https://mda.space/'
         },
@@ -60,6 +60,11 @@
     ];
 
     const projects: Project[] = [
+        {
+        name: '???',
+        description: 'hackutd 2026 project. coming soon.',
+        years: '2026'
+        },
         {
          name: 'MechaMind',
         demo: 'https://drive.google.com/file/d/1MPKN1U8PoMfBoGCGY-129b-aeOEo0Ppj',
